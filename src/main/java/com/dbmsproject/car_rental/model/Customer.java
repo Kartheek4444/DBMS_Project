@@ -23,16 +23,18 @@ public class Customer {
     @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @Column(name = "last_name", nullable = false)
+    @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "date_of_birth", nullable = false)
+    private String password;
+
+    @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
-    @Column(name = "license_no", unique = true, nullable = false)
+    @Column(name = "license_no", unique = true)
     private String licenseNo;
 
-    @Column(name = "expiry_date", nullable = false)
+    @Column(name = "expiry_date")
     private LocalDate expiryDate;
 
     @Column(unique = true, nullable = false)

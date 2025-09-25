@@ -16,6 +16,7 @@ public class CustomerDto {
     private Long customerId;
     private String firstName;
     private String lastName;
+    private String password;
     private LocalDate dateOfBirth;
     private String licenseNo;
     private LocalDate expiryDate;

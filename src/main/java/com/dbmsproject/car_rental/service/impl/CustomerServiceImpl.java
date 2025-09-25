@@ -1,12 +1,14 @@
 package com.dbmsproject.car_rental.service.impl;
 
 import com.dbmsproject.car_rental.dto.CustomerDto;
+import com.dbmsproject.car_rental.dto.CustomerSignupDto;
 import com.dbmsproject.car_rental.exception.ResourceNotFoundException;
 import com.dbmsproject.car_rental.mapper.CustomerMapper;
 import com.dbmsproject.car_rental.model.Customer;
 import com.dbmsproject.car_rental.repository.CustomerRepository;
 import com.dbmsproject.car_rental.service.CustomerService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,11 +19,18 @@ import java.util.stream.Collectors;
 public class CustomerServiceImpl implements CustomerService {
 
     private CustomerRepository customerRepository;
+    private PasswordEncoder passwordEncoder;
 
     @Override
-    public CustomerDto createCustomer(CustomerDto customerDto) {
+    public CustomerDto createCustomer(CustomerSignupDto customerSignupDto) {
 
-        Customer customer = CustomerMapper.toCustomer(customerDto);
+        Customer customer = Customer.builder()
+                .firstName(customerSignupDto.getFirstName())
+                .lastName(customerSignupDto.getLastName())
+                .password(passwordEncoder.encode(customerSignupDto.getPassword()))
+                .email(customerSignupDto.getEmail())
+                .phoneNumber(customerSignupDto.getPhoneNumber())
+                .build();
         Customer savedCustomer = customerRepository.save(customer);
         return CustomerMapper.toCustomerDto(savedCustomer);
     }
@@ -74,8 +83,9 @@ public class CustomerServiceImpl implements CustomerService {
                             .toList()
             );
         }
+        Customer updatedCustomer = customerRepository.save(customer);
         
-        return CustomerMapper.toCustomerDto(customer);
+        return CustomerMapper.toCustomerDto(updatedCustomer);
     }
 
     @Override

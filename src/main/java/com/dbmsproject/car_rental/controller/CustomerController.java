@@ -1,6 +1,7 @@
 package com.dbmsproject.car_rental.controller;
 
 import com.dbmsproject.car_rental.dto.CustomerDto;
+import com.dbmsproject.car_rental.dto.CustomerSignupDto;
 import com.dbmsproject.car_rental.service.CustomerService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,8 +17,8 @@ public class CustomerController {
     private CustomerService customerService;
 
     @PostMapping
-    public ResponseEntity<CustomerDto> createCustomer(@RequestBody CustomerDto customerDto) {
-        CustomerDto savedCustomer = customerService.createCustomer(customerDto);
+    public ResponseEntity<CustomerDto> createCustomer(@RequestBody CustomerSignupDto customerSignupDto) {
+        CustomerDto savedCustomer = customerService.createCustomer(customerSignupDto);
         return new ResponseEntity<>(savedCustomer, HttpStatus.CREATED);
     }
 
