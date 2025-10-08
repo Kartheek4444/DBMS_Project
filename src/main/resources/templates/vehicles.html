@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vehicles - VijayRentals Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#3b82f6",
+              secondary: "#1e40af",
+              accent: "#f59e0b",
+            },
+            fontFamily: {
+              poppins: ["Poppins", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .status-available {
+        background-color: #d1fae5;
+        color: #065f46;
+      }
+      .status-rented {
+        background-color: #fef3c7;
+        color: #92400e;
+      }
+      .status-maintenance {
+        background-color: #fee2e2;
+        color: #991b1b;
+      }
+      .table-container {
+        overflow-x: auto;
+      }
+      input.table-filter {
+        width: 100%;
+        padding: 4px 8px;
+        font-size: 0.875rem;
+        border: 1px solid #d1d5db;
+        border-radius: 4px;
+        outline: none;
+      }
+    </style>
+  </head>
+  <body class="font-poppins bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+      <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+        <div class="flex items-center">
+          <i class="fas fa-car text-primary text-2xl mr-2"></i>
+          <a href="index.html" class="text-2xl font-bold text-gray-800">
+            Vijay<span class="text-primary">Rentals</span>
+          </a>
+        </div>
+        <div class="hidden md:flex space-x-8">
+          <a href="dashboard.html" class="text-gray-600 hover:text-primary transition">Dashboard</a>
+          <a href="index.html" class="text-gray-600 hover:text-primary transition">Home</a>
+          <a href="vehicles.html" class="text-primary font-medium">Vehicles</a>
+          <a href="bookings.html" class="text-gray-600 hover:text-primary transition">Bookings</a>
+        </div>
+        <div class="flex items-center space-x-4">
+          <button class="relative text-gray-700">
+            <i class="fas fa-bell text-xl"></i>
+            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+          </button>
+          <a href="login.html" class="relative text-gray-700 flex items-center">
+            <i class="fas fa-user-circle text-2xl"></i>
+            <span class="ml-2 hidden sm:inline">Login</span>
+          </a>
+          <button id="mobile-menu-button" class="md:hidden text-gray-600 focus:outline-none">
+            <i class="fas fa-bars text-xl"></i>
+          </button>
+        </div>
+      </div>
+      <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200">
+        <a href="dashboard.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Dashboard</a>
+        <a href="index.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Home</a>
+        <a href="vehicles.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Vehicles</a>
+        <a href="bookings.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Bookings</a>
+      </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="bg-white py-8 shadow-sm">
+      <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+          <div>
+            <h1 class="text-3xl font-bold mb-2">Vehicle Management</h1>
+            <p class="text-gray-600">Manage your rental fleet efficiently</p>
+          </div>
+          <div class="mt-4 md:mt-0">
+            <button class="bg-primary text-white px-4 py-2 rounded-md hover:bg-secondary transition flex items-center">
+              <i class="fas fa-plus mr-2"></i> Add New Vehicle
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Vehicles Table with Column Filters -->
+    <section class="py-8">
+      <div class="container mx-auto px-4">
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-xl font-bold">All Vehicles</h2>
+          </div>
+          <div class="table-container">
+            <table id="vehiclesTable" class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Vehicle ID</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Model</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Year</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price/Day</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Mileage</th>
+                </tr>
+                <!-- Filter Row -->
+                <tr class="bg-gray-100">
+                  <th class="px-2 py-2"><input type="text" class="table-filter" placeholder="Filter ID"></th>
+                  <th class="px-2 py-2"><input type="text" class="table-filter" placeholder="Filter Model"></th>
+                  <th class="px-2 py-2"><input type="text" class="table-filter" placeholder="Filter Year"></th>
+                  <th class="px-2 py-2"><input type="text" class="table-filter" placeholder="Filter Category"></th>
+                  <th class="px-2 py-2"><input type="text" class="table-filter" placeholder="Filter Price"></th>
+                  <th class="px-2 py-2"><input type="text" class="table-filter" placeholder="Filter Status"></th>
+                  <th class="px-2 py-2"><input type="text" class="table-filter" placeholder="Filter Mileage"></th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr class="hover:bg-gray-100 cursor-pointer" onclick="window.location='vehicle_detail.html'">
+                  <td class="px-6 py-4">VH001</td>
+                  <td class="px-6 py-4">Toyota Camry</td>
+                  <td class="px-6 py-4">2022</td>
+                  <td class="px-6 py-4">Sedan</td>
+                  <td class="px-6 py-4">$45</td>
+                  <td class="px-6 py-4"><span class="px-2 py-1 text-xs rounded-full status-available">Available</span></td>
+                  <td class="px-6 py-4">15,240 km</td>
+                </tr>
+                <tr class="hover:bg-gray-100 cursor-pointer" onclick="window.location='vehicle_detail.html'">
+                  <td class="px-6 py-4">VH002</td>
+                  <td class="px-6 py-4">Honda CR-V</td>
+                  <td class="px-6 py-4">2021</td>
+                  <td class="px-6 py-4">SUV</td>
+                  <td class="px-6 py-4">$65</td>
+                  <td class="px-6 py-4"><span class="px-2 py-1 text-xs rounded-full status-rented">Rented</span></td>
+                  <td class="px-6 py-4">22,150 km</td>
+                </tr>
+                <tr class="hover:bg-gray-100 cursor-pointer" onclick="window.location='vehicle_detail.html'">
+                  <td class="px-6 py-4">VH003</td>
+                  <td class="px-6 py-4">Ford Explorer</td>
+                  <td class="px-6 py-4">2020</td>
+                  <td class="px-6 py-4">SUV</td>
+                  <td class="px-6 py-4">$75</td>
+                  <td class="px-6 py-4"><span class="px-2 py-1 text-xs rounded-full status-maintenance">Maintenance</span></td>
+                  <td class="px-6 py-4">35,670 km</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-300 py-6">
+      <div class="container mx-auto px-4 text-center">
+        <div class="flex items-center justify-center mb-2">
+          <i class="fas fa-car text-primary text-2xl mr-2"></i>
+          <span class="text-2xl font-bold">
+            Vijay<span class="text-primary">Rentals</span>
+          </span>
+        </div>
+        <p class="text-sm text-gray-400">&copy; 2023 VijayRentals. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <!-- Filter Script -->
+    <script>
+      // Column filter logic
+      const filterInputs = document.querySelectorAll("input.table-filter");
+      const rows = document.querySelectorAll("#vehiclesTable tbody tr");
+
+      filterInputs.forEach((input, colIndex) => {
+        input.addEventListener("keyup", () => {
+          const filterValue = input.value.toLowerCase();
+          rows.forEach((row) => {
+            const cellText = row.cells[colIndex].innerText.toLowerCase();
+            row.style.display = cellText.includes(filterValue) ? "" : "none";
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

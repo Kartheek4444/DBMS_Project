@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VijayRentals - Your Trusted Vehicle Rental Service</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#3b82f6",
+              secondary: "#1e40af",
+              accent: "#f59e0b",
+            },
+            fontFamily: {
+              poppins: ["Poppins", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .hero-bg {
+        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+          url("https://images.unsplash.com/photo-1486496572940-2bb2341fdbdf?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80");
+        background-size: cover;
+        background-position: center;
+      }
+      .vehicle-card {
+        transition: transform 0.3s ease;
+      }
+      .vehicle-card:hover {
+        transform: translateY(-5px);
+      }
+    </style>
+  </head>
+  <body class="font-poppins bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+          <div class="flex items-center">
+            <i class="fas fa-car text-primary text-2xl mr-2"></i>
+            <a href="index.html" class="text-2xl font-bold text-gray-800">
+              Vijay<span class="text-primary">Rentals</span>
+            </a>
+          </div>
+
+          <div class="hidden md:flex space-x-8">
+            <a th:href="@{/dashboard}" class="text-gray-600 hover:text-primary transition">Dashboard</a>
+            <a th:href="@{/index}" class="text-primary font-medium">Home</a>
+            <a th:href="@{/vehicles}" class="text-gray-600 hover:text-primary transition">Vehicles</a>
+            <a th:href="@{/bookings}" class="text-gray-600 hover:text-primary transition">Bookings</a>
+          </div>
+
+          <div class="flex items-center space-x-4">
+            <button class="relative text-gray-700">
+              <i class="fas fa-bell text-xl"></i>
+              <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+            </button>
+            <a th:href="@{/login}" class="relative text-gray-700 flex items-center">
+              <i class="fas fa-user-circle text-2xl"></i>
+              <span class="ml-2 hidden sm:inline">Login</span>
+            </a>
+            <button id="mobile-menu-button" class="md:hidden text-gray-600 focus:outline-none">
+              <i class="fas fa-bars text-xl"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200">
+          <a href="dashboard.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Dashboard</a>
+          <a href="index.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Home</a>
+          <a href="vehicles.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Vehicles</a>
+          <a href="bookings.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Bookings</a>
+        </div>
+      </nav>
+
+      <script>
+        // Simple toggle for mobile menu
+        const btn = document.getElementById('mobile-menu-button');
+        const menu = document.getElementById('mobile-menu');
+        btn.addEventListener('click', () => {
+          menu.classList.toggle('hidden');
+        });
+      </script>
+
+    <!-- Hero Section -->
+    <section class="hero-bg text-white py-20 md:py-32">
+      <div class="container mx-auto px-4 text-center">
+        <h1 class="text-4xl md:text-6xl font-bold mb-6">
+          Find Your Perfect Ride
+        </h1>
+        <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
+          Experience the freedom of the open road with our wide selection of
+          reliable and affordable vehicles.
+        </p>
+        <div
+          class="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-4"
+        >
+          <a
+            href="vehicles.html"
+            class="bg-accent text-white px-8 py-3 rounded-md font-medium hover:bg-yellow-600 transition"
+            >Browse Vehicles</a
+          >
+          <a
+            href="#"
+            class="bg-transparent border-2 border-white px-8 py-3 rounded-md font-medium hover:bg-white hover:text-gray-900 transition"
+            >Learn More</a
+          >
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-16 bg-white">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-12">
+          Why Choose VijayRentals?
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="text-center p-6">
+            <div
+              class="bg-primary bg-opacity-10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+            >
+              <i class="fas fa-shield-alt text-primary text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold mb-2">Safe & Reliable</h3>
+            <p class="text-gray-600">
+              All our vehicles undergo regular maintenance and safety checks to
+              ensure your peace of mind.
+            </p>
+          </div>
+
+          <div class="text-center p-6">
+            <div
+              class="bg-primary bg-opacity-10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+            >
+              <i class="fas fa-tag text-primary text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold mb-2">Best Prices</h3>
+            <p class="text-gray-600">
+              We offer competitive rates with no hidden fees. Find the perfect
+              vehicle for your budget.
+            </p>
+          </div>
+
+          <div class="text-center p-6">
+            <div
+              class="bg-primary bg-opacity-10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+            >
+              <i class="fas fa-headset text-primary text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold mb-2">24/7 Support</h3>
+            <p class="text-gray-600">
+              Our customer service team is available round the clock to assist
+              you with any queries.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Popular Vehicles Section -->
+    <section class="py-16 bg-gray-100">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-4">Popular Vehicles</h2>
+        <p class="text-gray-600 text-center mb-12">
+          Check out some of our most sought-after rental options
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- Vehicle 1 -->
+          <div
+            class="bg-white rounded-lg overflow-hidden shadow-md vehicle-card"
+          >
+            <img
+              src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+              alt="Sedan"
+              class="w-full h-48 object-cover"
+            />
+            <div class="p-6">
+              <h3 class="text-xl font-semibold mb-2">Economy Sedan</h3>
+              <p class="text-gray-600 mb-4">
+                Perfect for city driving and fuel efficiency.
+              </p>
+              <div class="flex justify-between items-center">
+                <span class="text-primary font-bold">$35/day</span>
+                <a
+                  href="vehicles.html"
+                  class="text-primary hover:text-secondary font-medium"
+                  >View Details</a
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Vehicle 2 -->
+          <div
+            class="bg-white rounded-lg overflow-hidden shadow-md vehicle-card"
+          >
+            <img
+              src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+              alt="SUV"
+              class="w-full h-48 object-cover"
+            />
+            <div class="p-6">
+              <h3 class="text-xl font-semibold mb-2">Family SUV</h3>
+              <p class="text-gray-600 mb-4">
+                Spacious and comfortable for family trips.
+              </p>
+              <div class="flex justify-between items-center">
+                <span class="text-primary font-bold">$65/day</span>
+                <a
+                  href="vehicles.html"
+                  class="text-primary hover:text-secondary font-medium"
+                  >View Details</a
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Vehicle 3 -->
+          <div
+            class="bg-white rounded-lg overflow-hidden shadow-md vehicle-card"
+          >
+            <img
+              src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+              alt="Luxury Car"
+              class="w-full h-48 object-cover"
+            />
+            <div class="p-6">
+              <h3 class="text-xl font-semibold mb-2">Luxury Sedan</h3>
+              <p class="text-gray-600 mb-4">
+                Experience premium comfort and style.
+              </p>
+              <div class="flex justify-between items-center">
+                <span class="text-primary font-bold">$120/day</span>
+                <a
+                  href="vehicles.html"
+                  class="text-primary hover:text-secondary font-medium"
+                  >View Details</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center mt-12">
+          <a
+            href="vehicles.html"
+            class="bg-primary text-white px-6 py-3 rounded-md font-medium hover:bg-secondary transition"
+            >View All Vehicles</a
+          >
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="py-16 bg-white">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-12">How It Works</h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div class="text-center">
+            <div
+              class="bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold"
+            >
+              1
+            </div>
+            <h3 class="text-lg font-semibold mb-2">Choose Vehicle</h3>
+            <p class="text-gray-600">Select from our wide range of vehicles</p>
+          </div>
+
+          <div class="text-center">
+            <div
+              class="bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold"
+            >
+              2
+            </div>
+            <h3 class="text-lg font-semibold mb-2">Book & Confirm</h3>
+            <p class="text-gray-600">
+              Provide details and confirm your booking
+            </p>
+          </div>
+
+          <div class="text-center">
+            <div
+              class="bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold"
+            >
+              3
+            </div>
+            <h3 class="text-lg font-semibold mb-2">Pick Up</h3>
+            <p class="text-gray-600">Collect your vehicle from our location</p>
+          </div>
+
+          <div class="text-center">
+            <div
+              class="bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold"
+            >
+              4
+            </div>
+            <h3 class="text-lg font-semibold mb-2">Enjoy Your Ride</h3>
+            <p class="text-gray-600">Hit the road and create memories</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="py-16 bg-gray-100">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-12">
+          What Our Customers Say
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="flex items-center mb-4">
+              <div class="w-12 h-12 bg-gray-300 rounded-full mr-4"></div>
+              <div>
+                <h4 class="font-semibold">Rajesh Kumar</h4>
+                <div class="flex text-accent">
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                </div>
+              </div>
+            </div>
+            <p class="text-gray-600">
+              "Excellent service! The car was clean, well-maintained, and the
+              process was smooth. Will definitely rent from VijayRentals again."
+            </p>
+          </div>
+
+          <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="flex items-center mb-4">
+              <div class="w-12 h-12 bg-gray-300 rounded-full mr-4"></div>
+              <div>
+                <h4 class="font-semibold">Priya Sharma</h4>
+                <div class="flex text-accent">
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star-half-alt"></i>
+                </div>
+              </div>
+            </div>
+            <p class="text-gray-600">
+              "Great experience renting a family SUV for our vacation. The
+              vehicle was perfect and the staff was very helpful."
+            </p>
+          </div>
+
+          <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="flex items-center mb-4">
+              <div class="w-12 h-12 bg-gray-300 rounded-full mr-4"></div>
+              <div>
+                <h4 class="font-semibold">Anil Patel</h4>
+                <div class="flex text-accent">
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                </div>
+              </div>
+            </div>
+            <p class="text-gray-600">
+              "I've used VijayRentals multiple times for business trips. Their
+              service is consistently reliable and professional."
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-300 py-6">
+        <div class="container mx-auto px-4 text-center">
+        <div class="flex items-center justify-center mb-2">
+            <i class="fas fa-car text-primary text-2xl mr-2"></i>
+            <span class="text-2xl font-bold">
+            Vijay<span class="text-primary">Rentals</span>
+            </span>
+        </div>
+        <p class="text-sm text-gray-400">
+            &copy; 2023 VijayRentals. All rights reserved.
+        </p>
+        </div>
+    </footer>
+
+  </body>
+</html>
