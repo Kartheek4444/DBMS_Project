@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vehicle Details - VijayRentals</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#3b82f6",
+              secondary: "#1e40af",
+              accent: "#f59e0b",
+            },
+            fontFamily: {
+              poppins: ["Poppins", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="font-poppins bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+      <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+        <div class="flex items-center">
+          <i class="fas fa-car text-primary text-2xl mr-2"></i>
+          <a href="index.html" class="text-2xl font-bold text-gray-800">
+            Vijay<span class="text-primary">Rentals</span>
+          </a>
+        </div>
+
+        <div class="hidden md:flex space-x-8">
+          <a href="dashboard.html" class="text-gray-600 hover:text-primary transition">Dashboard</a>
+          <a href="index.html" class="text-gray-600 hover:text-primary transition">Home</a>
+          <a href="vehicles.html" class="text-primary font-medium">Vehicles</a>
+          <a href="bookings.html" class="text-gray-600 hover:text-primary transition">Bookings</a>
+        </div>
+
+        <div class="flex items-center space-x-4">
+          <button class="relative text-gray-700">
+            <i class="fas fa-bell text-xl"></i>
+            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+          </button>
+          <a href="login.html" class="relative text-gray-700 flex items-center">
+            <i class="fas fa-user-circle text-2xl"></i>
+            <span class="ml-2 hidden sm:inline">Login</span>
+          </a>
+          <button id="mobile-menu-button" class="md:hidden text-gray-600 focus:outline-none">
+            <i class="fas fa-bars text-xl"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Menu -->
+      <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200">
+        <a href="dashboard.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Dashboard</a>
+        <a href="index.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Home</a>
+        <a href="vehicles.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Vehicles</a>
+        <a href="bookings.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Bookings</a>
+      </div>
+    </nav>
+
+    <script>
+      // Toggle for mobile menu
+      const btn = document.getElementById("mobile-menu-button");
+      const menu = document.getElementById("mobile-menu");
+      btn.addEventListener("click", () => {
+        menu.classList.toggle("hidden");
+      });
+    </script>
+
+    <!-- Vehicle Details Section -->
+    <section class="py-12">
+      <div class="container mx-auto px-4">
+        <!-- Breadcrumb -->
+        <nav class="text-gray-500 text-sm mb-6">
+          <a href="vehicles.html" class="hover:text-primary">Vehicles</a> /
+          <span class="text-gray-700 font-medium">Toyota Camry</span>
+        </nav>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <!-- Vehicle Image -->
+          <div>
+            <img
+              src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=900&q=80"
+              alt="Toyota Camry"
+              class="rounded-lg shadow-md w-full h-auto"
+            />
+          </div>
+
+          <!-- Vehicle Info -->
+          <div>
+            <h1 class="text-3xl font-bold mb-2">Toyota Camry</h1>
+            <p class="text-gray-600 mb-4">
+              Vehicle ID: <span class="font-medium">VH001</span>
+            </p>
+            <p class="text-lg text-primary font-semibold mb-4">$45 / day</p>
+
+            <div class="grid grid-cols-2 gap-4 mb-6">
+              <div class="flex items-center text-gray-700">
+                <i class="fas fa-calendar-alt mr-2 text-primary"></i> Year: 2022
+              </div>
+              <div class="flex items-center text-gray-700">
+                <i class="fas fa-tachometer-alt mr-2 text-primary"></i> Mileage: 15,240 km
+              </div>
+              <div class="flex items-center text-gray-700">
+                <i class="fas fa-palette mr-2 text-primary"></i> Color: Blue
+              </div>
+              <div class="flex items-center text-gray-700">
+                <i class="fas fa-id-card mr-2 text-primary"></i> License: MH01AB1234
+              </div>
+              <div class="flex items-center text-gray-700">
+                <i class="fas fa-car-side mr-2 text-primary"></i> Category: Sedan
+              </div>
+              <div class="flex items-center text-gray-700">
+                <i class="fas fa-check-circle mr-2 text-green-600"></i> Status: Available
+              </div>
+            </div>
+
+            <p class="text-gray-600 mb-6">
+              The Toyota Camry offers a comfortable ride, excellent fuel economy,
+              and a spacious interior—perfect for city and highway drives.
+            </p>
+
+            <button class="bg-primary text-white px-6 py-3 rounded-md font-medium hover:bg-secondary transition">
+              Book Now
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-300 py-6">
+      <div class="container mx-auto px-4 text-center">
+        <div class="flex items-center justify-center mb-2">
+          <i class="fas fa-car text-primary text-2xl mr-2"></i>
+          <span class="text-2xl font-bold">
+            Vijay<span class="text-primary">Rentals</span>
+          </span>
+        </div>
+        <p class="text-sm text-gray-400">
+          &copy; 2023 VijayRentals. All rights reserved.
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -41,12 +41,12 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/home", "/signup", "/css/**", "/js/**").permitAll()
+                        .requestMatchers("/signup", "/css/**", "/js/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/dashboard", true)
+                        .defaultSuccessUrl("/index", true)
                         .permitAll()
                 )
                 .logout(logout -> logout

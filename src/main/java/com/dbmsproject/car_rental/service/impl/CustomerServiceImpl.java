@@ -89,6 +89,21 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public Customer findByEmail(String email) {
+        return customerRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found with email: " + email));
+    }
+
+    @Override
+    public boolean validateCustomer(String email, String rawPassword) {
+        // Find customer by email
+        return customerRepository.findByEmail(email)
+                .map(customer -> passwordEncoder.matches(rawPassword, customer.getPassword()))
+                .orElse(false); // email not found
+    }
+
+
+    @Override
     public void deleteCustomer(Long customerId) {
         Customer customer = customerRepository.findById(customerId).orElseThrow(() ->
                 new ResourceNotFoundException("Customer not found with id: " + customerId));
