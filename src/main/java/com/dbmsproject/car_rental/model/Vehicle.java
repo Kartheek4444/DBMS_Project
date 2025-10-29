@@ -39,6 +39,12 @@ public class Vehicle {
     @Column(name = "current_mileage")
     private Integer currentMileage;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
+    @Column(name = "description", columnDefinition = "TEXT")
+    private String description;
+
     @Enumerated(EnumType.STRING)
     private VehicleStatus status = VehicleStatus.AVAILABLE;
 

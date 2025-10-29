@@ -9,15 +9,14 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
 import com.dbmsproject.car_rental.service.CustomerService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RequestParam;
 import com.dbmsproject.car_rental.model.Vehicle;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Controller
@@ -87,11 +86,6 @@ public class PageController {
         return "dashboard"; // dashboard.html, only accessible after login
     }
 
-    @GetMapping("/vehicles")
-    public String vehiclesPage() {
-        return "vehicles"; // vehicles.html
-    }
-
 
     @GetMapping("/vehicle_detail")
     public String vehicleDetailPage() {
@@ -126,4 +120,22 @@ public class PageController {
             return "redirect:/vehicles/register";
         }
     }
+
+    @GetMapping("/vehicles")
+    public String showVehicles(Model model) {
+        List<VehicleDto> vehicles = vehicleService.getAllVehicles();
+        model.addAttribute("vehicles", vehicles);
+        return "vehicles";
+    }
+
+    @GetMapping("/vehicles/{id}")
+    public String showVehicleDetail(@PathVariable Long id, Model model) {
+        VehicleDto vehicle = vehicleService.getVehicleById(id);
+        if (vehicle == null) {
+            return "redirect:/vehicles";
+        }
+        model.addAttribute("vehicle", vehicle);
+        return "vehicle_detail";
+    }
+
 }

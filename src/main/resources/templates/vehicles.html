@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -102,9 +102,10 @@
             <p class="text-gray-600">Manage your rental fleet efficiently</p>
           </div>
           <div class="mt-4 md:mt-0">
-            <button class="bg-primary text-white px-4 py-2 rounded-md hover:bg-secondary transition flex items-center">
-              <i class="fas fa-plus mr-2"></i> Add New Vehicle
-            </button>
+              <a th:href="@{/vehicles/register}" class="bg-primary text-white px-4 py-2 rounded-md hover:bg-secondary transition flex items-center">
+                  <i class="fas fa-plus mr-2"></i> Add New Vehicle
+              </a>
+
           </div>
         </div>
       </div>
@@ -114,63 +115,102 @@
     <section class="py-8">
       <div class="container mx-auto px-4">
         <div class="bg-white rounded-lg shadow-md overflow-hidden">
-          <div class="px-6 py-4 border-b border-gray-200">
-            <h2 class="text-xl font-bold">All Vehicles</h2>
-          </div>
-          <div class="table-container">
-            <table id="vehiclesTable" class="min-w-full divide-y divide-gray-200">
-              <thead class="bg-gray-50">
-                <tr>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Vehicle ID</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Model</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Year</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price/Day</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Mileage</th>
-                </tr>
-                <!-- Filter Row -->
-                <tr class="bg-gray-100">
-                  <th class="px-2 py-2"><input type="text" class="table-filter" placeholder="Filter ID"></th>
-                  <th class="px-2 py-2"><input type="text" class="table-filter" placeholder="Filter Model"></th>
-                  <th class="px-2 py-2"><input type="text" class="table-filter" placeholder="Filter Year"></th>
-                  <th class="px-2 py-2"><input type="text" class="table-filter" placeholder="Filter Category"></th>
-                  <th class="px-2 py-2"><input type="text" class="table-filter" placeholder="Filter Price"></th>
-                  <th class="px-2 py-2"><input type="text" class="table-filter" placeholder="Filter Status"></th>
-                  <th class="px-2 py-2"><input type="text" class="table-filter" placeholder="Filter Mileage"></th>
-                </tr>
-              </thead>
-              <tbody class="bg-white divide-y divide-gray-200">
-                <tr class="hover:bg-gray-100 cursor-pointer" onclick="window.location='vehicle_detail.html'">
-                  <td class="px-6 py-4">VH001</td>
-                  <td class="px-6 py-4">Toyota Camry</td>
-                  <td class="px-6 py-4">2022</td>
-                  <td class="px-6 py-4">Sedan</td>
-                  <td class="px-6 py-4">$45</td>
-                  <td class="px-6 py-4"><span class="px-2 py-1 text-xs rounded-full status-available">Available</span></td>
-                  <td class="px-6 py-4">15,240 km</td>
-                </tr>
-                <tr class="hover:bg-gray-100 cursor-pointer" onclick="window.location='vehicle_detail.html'">
-                  <td class="px-6 py-4">VH002</td>
-                  <td class="px-6 py-4">Honda CR-V</td>
-                  <td class="px-6 py-4">2021</td>
-                  <td class="px-6 py-4">SUV</td>
-                  <td class="px-6 py-4">$65</td>
-                  <td class="px-6 py-4"><span class="px-2 py-1 text-xs rounded-full status-rented">Rented</span></td>
-                  <td class="px-6 py-4">22,150 km</td>
-                </tr>
-                <tr class="hover:bg-gray-100 cursor-pointer" onclick="window.location='vehicle_detail.html'">
-                  <td class="px-6 py-4">VH003</td>
-                  <td class="px-6 py-4">Ford Explorer</td>
-                  <td class="px-6 py-4">2020</td>
-                  <td class="px-6 py-4">SUV</td>
-                  <td class="px-6 py-4">$75</td>
-                  <td class="px-6 py-4"><span class="px-2 py-1 text-xs rounded-full status-maintenance">Maintenance</span></td>
-                  <td class="px-6 py-4">35,670 km</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+            <!-- Filter Section -->
+            <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+                <div class="flex flex-col lg:flex-row lg:items-end gap-4">
+                    <!-- Filter Controls -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 flex-1">
+                        <!-- Category Filter -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-tag mr-1 text-primary"></i>Category
+                            </label>
+                            <select id="categoryFilter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                                <option value="">All Categories</option>
+                                <option th:each="cat : ${T(com.dbmsproject.car_rental.model.VehicleCategory).values()}"
+                                        th:value="${cat}"
+                                        th:text="${cat}"></option>
+                            </select>
+                        </div>
+
+                        <!-- Status Filter -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-info-circle mr-1 text-primary"></i>Status
+                            </label>
+                            <select id="statusFilter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                                <option value="">All Status</option>
+                                <option th:each="status : ${T(com.dbmsproject.car_rental.model.VehicleStatus).values()}"
+                                        th:value="${status}"
+                                        th:text="${status}"></option>
+                            </select>
+                        </div>
+
+                        <!-- Price Range Filter -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-dollar-sign mr-1 text-primary"></i>Price Range ($/day)
+                            </label>
+                            <div class="flex items-center space-x-2">
+                                <input type="number" id="minPrice" placeholder="Min"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                                <span class="text-gray-500">-</span>
+                                <input type="number" id="maxPrice" placeholder="Max"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Clear Filters Button -->
+                    <div class="lg:mb-0">
+                        <button id="clearFilters" class="w-full lg:w-auto px-6 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition flex items-center justify-center whitespace-nowrap">
+                            <i class="fas fa-times-circle mr-2"></i>Clear Filters
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="table-container">
+                <table id="vehiclesTable" class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Vehicle ID</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Model</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Year</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price/Day</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Mileage</th>
+                    </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                    <tr th:each="vehicle : ${vehicles}" class="hover:bg-gray-100 cursor-pointer vehicle-row"
+                        th:onclick="|window.location='/vehicles/' + ${vehicle.vehicleId}|"
+                        th:attr="data-category=${vehicle.category}, data-status=${vehicle.status}, data-price=${vehicle.pricePerDay}">
+                    <td class="px-6 py-4" th:text="${vehicle.vehicleId}">VH001</td>
+                        <td class="px-6 py-4" th:text="${vehicle.make + ' ' + vehicle.model}">Toyota Camry</td>
+                        <td class="px-6 py-4" th:text="${vehicle.year}">2022</td>
+                        <td class="px-6 py-4" th:text="${vehicle.category}">Sedan</td>
+                        <td class="px-6 py-4" th:text="'$' + ${vehicle.pricePerDay}">$45</td>
+                        <td class="px-6 py-4">
+          <span class="px-2 py-1 text-xs rounded-full"
+                th:classappend="${vehicle.status.name() == 'AVAILABLE' ? 'status-available' :
+                                (vehicle.status.name() == 'RENTED' ? 'status-rented' : 'status-maintenance')}"
+                th:text="${vehicle.status}">Available</span>
+                        </td>
+                        <td class="px-6 py-4" th:text="${vehicle.currentMileage + ' km'}">15,240 km</td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(vehicles)}">
+                        <td colspan="7" class="px-6 py-4 text-center text-gray-500">No vehicles found</td>
+                    </tr>
+                    <tr id="noResults" style="display: none;">
+                        <td colspan="7" class="px-6 py-4 text-center text-gray-500">No vehicles match the selected filters</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
         </div>
       </div>
     </section>
@@ -190,19 +230,66 @@
 
     <!-- Filter Script -->
     <script>
-      // Column filter logic
-      const filterInputs = document.querySelectorAll("input.table-filter");
-      const rows = document.querySelectorAll("#vehiclesTable tbody tr");
+        const categoryFilter = document.getElementById('categoryFilter');
+        const statusFilter = document.getElementById('statusFilter');
+        const minPriceInput = document.getElementById('minPrice');
+        const maxPriceInput = document.getElementById('maxPrice');
+        const clearFiltersBtn = document.getElementById('clearFilters');
+        const rows = document.querySelectorAll('.vehicle-row');
+        const noResultsRow = document.getElementById('noResults');
 
-      filterInputs.forEach((input, colIndex) => {
-        input.addEventListener("keyup", () => {
-          const filterValue = input.value.toLowerCase();
-          rows.forEach((row) => {
-            const cellText = row.cells[colIndex].innerText.toLowerCase();
-            row.style.display = cellText.includes(filterValue) ? "" : "none";
+        function applyFilters() {
+          const selectedCategory = categoryFilter.value.toUpperCase();
+          const selectedStatus = statusFilter.value.toUpperCase();
+          const minPrice = parseFloat(minPriceInput.value) || 0;
+          const maxPrice = parseFloat(maxPriceInput.value) || Infinity;
+
+          let visibleCount = 0;
+
+          rows.forEach(row => {
+            const category = row.dataset.category.toUpperCase();
+            const status = row.dataset.status.toUpperCase();
+            const price = parseFloat(row.dataset.price);
+
+            const categoryMatch = !selectedCategory || category === selectedCategory;
+            const statusMatch = !selectedStatus || status === selectedStatus;
+            const priceMatch = price >= minPrice && price <= maxPrice;
+
+            if (categoryMatch && statusMatch && priceMatch) {
+              row.style.display = '';
+              visibleCount++;
+            } else {
+              row.style.display = 'none';
+            }
           });
+
+          // Show/hide no results message
+          noResultsRow.style.display = visibleCount === 0 ? '' : 'none';
+        }
+
+        function clearFilters() {
+          categoryFilter.value = '';
+          statusFilter.value = '';
+          minPriceInput.value = '';
+          maxPriceInput.value = '';
+          applyFilters();
+        }
+
+        // Event listeners
+        categoryFilter.addEventListener('change', applyFilters);
+        statusFilter.addEventListener('change', applyFilters);
+        minPriceInput.addEventListener('input', applyFilters);
+        maxPriceInput.addEventListener('input', applyFilters);
+        clearFiltersBtn.addEventListener('click', clearFilters);
+
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton?.addEventListener('click', () => {
+          mobileMenu.classList.toggle('hidden');
         });
-      });
     </script>
+
   </body>
 </html>

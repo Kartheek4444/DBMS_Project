@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -85,61 +85,76 @@
     <section class="py-12">
       <div class="container mx-auto px-4">
         <!-- Breadcrumb -->
-        <nav class="text-gray-500 text-sm mb-6">
-          <a href="vehicles.html" class="hover:text-primary">Vehicles</a> /
-          <span class="text-gray-700 font-medium">Toyota Camry</span>
-        </nav>
+          <nav class="text-gray-500 text-sm mb-6">
+              <a th:href="@{/vehicles}" class="hover:text-primary">Vehicles</a> /
+              <span class="text-gray-700 font-medium" th:text="${vehicle.make + ' ' + vehicle.model}">Toyota Camry</span>
+          </nav>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <!-- Vehicle Image -->
-          <div>
-            <img
-              src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=900&q=80"
-              alt="Toyota Camry"
-              class="rounded-lg shadow-md w-full h-auto"
-            />
-          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
           <!-- Vehicle Info -->
-          <div>
-            <h1 class="text-3xl font-bold mb-2">Toyota Camry</h1>
-            <p class="text-gray-600 mb-4">
-              Vehicle ID: <span class="font-medium">VH001</span>
-            </p>
-            <p class="text-lg text-primary font-semibold mb-4">$45 / day</p>
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  <!-- Vehicle Image -->
+                  <div>
+                      <img
+                              th:src="${vehicle.imageUrl != null ? vehicle.imageUrl : 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=900&q=80'}"
+                              th:alt="${vehicle.make + ' ' + vehicle.model}"
+                              class="rounded-lg shadow-md w-full h-auto"
+                      />
+                  </div>
 
-            <div class="grid grid-cols-2 gap-4 mb-6">
-              <div class="flex items-center text-gray-700">
-                <i class="fas fa-calendar-alt mr-2 text-primary"></i> Year: 2022
-              </div>
-              <div class="flex items-center text-gray-700">
-                <i class="fas fa-tachometer-alt mr-2 text-primary"></i> Mileage: 15,240 km
-              </div>
-              <div class="flex items-center text-gray-700">
-                <i class="fas fa-palette mr-2 text-primary"></i> Color: Blue
-              </div>
-              <div class="flex items-center text-gray-700">
-                <i class="fas fa-id-card mr-2 text-primary"></i> License: MH01AB1234
-              </div>
-              <div class="flex items-center text-gray-700">
-                <i class="fas fa-car-side mr-2 text-primary"></i> Category: Sedan
-              </div>
-              <div class="flex items-center text-gray-700">
-                <i class="fas fa-check-circle mr-2 text-green-600"></i> Status: Available
-              </div>
-            </div>
+                  <!-- Vehicle Info -->
+                  <div>
+                      <h1 class="text-3xl font-bold mb-2" th:text="${vehicle.make + ' ' + vehicle.model}">Toyota Camry</h1>
+                      <p class="text-gray-600 mb-4">
+                          Vehicle ID: <span class="font-medium" th:text="${vehicle.vehicleId}">VH001</span>
+                      </p>
+                      <p class="text-lg text-primary font-semibold mb-4" th:text="'$' + ${vehicle.pricePerDay} + ' / day'">$45 / day</p>
 
-            <p class="text-gray-600 mb-6">
-              The Toyota Camry offers a comfortable ride, excellent fuel economy,
-              and a spacious interior—perfect for city and highway drives.
-            </p>
+                      <div class="grid grid-cols-2 gap-4 mb-6">
+                          <div class="flex items-center text-gray-700">
+                              <i class="fas fa-calendar-alt mr-2 text-primary"></i>
+                              Year: <span th:text="${vehicle.year}">2022</span>
+                          </div>
+                          <div class="flex items-center text-gray-700">
+                              <i class="fas fa-tachometer-alt mr-2 text-primary"></i>
+                              Mileage: <span th:text="${vehicle.currentMileage + ' km'}">15,240 km</span>
+                          </div>
+                          <div class="flex items-center text-gray-700">
+                              <i class="fas fa-palette mr-2 text-primary"></i>
+                              Color: <span th:text="${vehicle.color}">Blue</span>
+                          </div>
+                          <div class="flex items-center text-gray-700">
+                              <i class="fas fa-id-card mr-2 text-primary"></i>
+                              License: <span th:text="${vehicle.licensePlate}">MH01AB1234</span>
+                          </div>
+                          <div class="flex items-center text-gray-700">
+                              <i class="fas fa-car-side mr-2 text-primary"></i>
+                              Category: <span th:text="${vehicle.category}">Sedan</span>
+                          </div>
+                          <div class="flex items-center text-gray-700">
+                              <i class="fas fa-check-circle mr-2"
+                                 th:classappend="${vehicle.status.name() == 'AVAILABLE' ? 'text-green-600' :
+                           (vehicle.status.name() == 'RENTED' ? 'text-yellow-600' : 'text-red-600')}"></i>
+                              Status: <span th:text="${vehicle.status}">Available</span>
+                          </div>
+                      </div>
 
-            <button class="bg-primary text-white px-6 py-3 rounded-md font-medium hover:bg-secondary transition">
-              Book Now
-            </button>
+                      <p class="text-gray-600 mb-6" th:text="${vehicle.description != null ? vehicle.description : 'No description available'}">
+                          The Toyota Camry offers a comfortable ride, excellent fuel economy,
+                          and a spacious interior—perfect for city and highway drives.
+                      </p>
+
+                      <button class="bg-primary text-white px-6 py-3 rounded-md font-medium hover:bg-secondary transition"
+                              th:disabled="${vehicle.status.name() != 'AVAILABLE'}">
+                          <span th:if="${vehicle.status.name() == 'AVAILABLE'}">Book Now</span>
+                          <span th:if="${vehicle.status.name() != 'AVAILABLE'}">Not Available</span>
+                      </button>
+                  </div>
+              </div>
+
           </div>
-        </div>
-      </div>
     </section>
 
     <!-- Footer -->

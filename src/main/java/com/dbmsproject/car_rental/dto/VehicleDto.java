@@ -23,4 +23,6 @@ public class VehicleDto {
     private BigDecimal pricePerDay;
     private Integer currentMileage;
     private VehicleStatus status;
+    private String imageUrl;
+    private String description;
 }

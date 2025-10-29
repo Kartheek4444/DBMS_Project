@@ -18,6 +18,8 @@ public class VehicleMapper {
                 .pricePerDay(vehicle.getPricePerDay())
                 .currentMileage(vehicle.getCurrentMileage())
                 .status(vehicle.getStatus())
+                .imageUrl(vehicle.getImageUrl())
+                .description(vehicle.getDescription())  // Add this line
                 .build();
     }
 
@@ -33,6 +35,8 @@ public class VehicleMapper {
                 .pricePerDay(vehicleDto.getPricePerDay())
                 .currentMileage(vehicleDto.getCurrentMileage())
                 .status(vehicleDto.getStatus())
+                .imageUrl(vehicleDto.getImageUrl())
+                .description(vehicleDto.getDescription())  // Add this line
                 .build();
 
         if (vehicle.getBookings() == null) vehicle.setBookings(new ArrayList<>());
@@ -40,4 +44,5 @@ public class VehicleMapper {
 
         return vehicle;
     }
+
 }
