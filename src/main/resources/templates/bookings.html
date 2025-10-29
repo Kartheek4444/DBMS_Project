@@ -50,16 +50,16 @@
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
           <div class="flex items-center">
             <i class="fas fa-car text-primary text-2xl mr-2"></i>
-            <a href="index.html" class="text-2xl font-bold text-gray-800">
+            <a th:href="@{/index}" class="text-2xl font-bold text-gray-800">
               Vijay<span class="text-primary">Rentals</span>
             </a>
           </div>
   
           <div class="hidden md:flex space-x-8">
-            <a href="dashboard.html" class="text-gray-600 hover:text-primary transition">Dashboard</a>
-            <a href="index.html" class="text-gray-600 hover:text-primary transition">Home</a>
-            <a href="vehicles.html" class="text-gray-600 hover:text-primary transition">Vehicles</a>
-            <a href="bookings.html" class="text-primary font-medium">Bookings</a>
+              <a th:href="@{/dashboard}" class="text-gray-600 hover:text-primary transition">Dashboard</a>
+              <a th:href="@{/index}" class="text-primary font-medium">Home</a>
+              <a th:href="@{/vehicles}" class="text-gray-600 hover:text-primary transition">Vehicles</a>
+              <a th:href="@{/bookings}" class="text-gray-600 hover:text-primary transition">Bookings</a>
           </div>
   
           <div class="flex items-center space-x-4">
@@ -67,7 +67,7 @@
               <i class="fas fa-bell text-xl"></i>
               <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
             </button>
-            <a href="login.html" class="relative text-gray-700 flex items-center">
+            <a th:href="@{/index}" class="relative text-gray-700 flex items-center">
               <i class="fas fa-user-circle text-2xl"></i>
               <span class="ml-2 hidden sm:inline">Login</span>
             </a>
@@ -79,10 +79,10 @@
   
         <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200">
-          <a href="dashboard.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Dashboard</a>
-          <a href="index.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Home</a>
-          <a href="vehicles.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Vehicles</a>
-          <a href="bookings.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Bookings</a>
+            <a th:href="@{/dashboard}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Dashboard</a>
+            <a th:href="@{/index}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Home</a>
+            <a th:href="@{/vehicles}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Vehicles</a>
+            <a th:href="@{/bookings}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Bookings</a>
         </div>
       </nav>
 

@@ -1,6 +1,8 @@
 package com.dbmsproject.car_rental.controller;
 
 import com.dbmsproject.car_rental.dto.CustomerSignupDto;
+import com.dbmsproject.car_rental.dto.VehicleDto;
+import com.dbmsproject.car_rental.service.VehicleService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -14,12 +16,16 @@ import org.springframework.ui.Model;
 import com.dbmsproject.car_rental.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestParam;
+import com.dbmsproject.car_rental.model.Vehicle;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @RequiredArgsConstructor
 @Controller
 public class PageController {
 
     private final CustomerService customerService;
+    private final VehicleService vehicleService;
+
     @GetMapping({"/", "/index"})
     public String homePage() {
         return "index"; // home.html
@@ -79,5 +85,45 @@ public class PageController {
     @GetMapping("/dashboard")
     public String dashboardPage() {
         return "dashboard"; // dashboard.html, only accessible after login
+    }
+
+    @GetMapping("/vehicles")
+    public String vehiclesPage() {
+        return "vehicles"; // vehicles.html
+    }
+
+
+    @GetMapping("/vehicle_detail")
+    public String vehicleDetailPage() {
+        return "vehicle_detail"; // vehicle_detail.html
+    }
+    @GetMapping("/bookings")
+    public String bookingsPage() {
+        return "bookings"; // bookings.html
+
+    }
+
+    @GetMapping("/vehicles/register")
+    public String showRegisterVehicleForm(Model model) {
+        model.addAttribute("vehicle", new VehicleDto());
+        return "register_vehicle";
+    }
+
+    @PostMapping("/vehicles/register")
+    public String registerVehicle(@ModelAttribute("vehicle") VehicleDto vehicleDto,
+                                  BindingResult result,
+                                  RedirectAttributes redirectAttributes) {
+        if (result.hasErrors()) {
+            return "register_vehicle";
+        }
+
+        try {
+            vehicleService.createVehicle(vehicleDto);
+            redirectAttributes.addFlashAttribute("success", "Vehicle registered successfully!");
+            return "redirect:/vehicles";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to register vehicle: " + e.getMessage());
+            return "redirect:/vehicles/register";
+        }
     }
 }
