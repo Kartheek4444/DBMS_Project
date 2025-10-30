@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Page Not Found - VijayRentals</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3b82f6",
+                        secondary: "#1e40af",
+                        accent: "#f59e0b",
+                    },
+                    fontFamily: {
+                        poppins: ["Poppins", "sans-serif"],
+                    },
+                },
+            },
+        };
+    </script>
+</head>
+<body class="font-poppins bg-gray-50">
+<!-- Navigation -->
+<nav class="bg-white shadow-md sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+        <div class="flex items-center">
+            <i class="fas fa-car text-primary text-2xl mr-2"></i>
+            <a th:href="@{/index}" class="text-2xl font-bold text-gray-800">
+                Vijay<span class="text-primary">Rentals</span>
+            </a>
+        </div>
+        <div class="hidden md:flex space-x-8">
+            <a th:href="@{/dashboard}" class="text-gray-600 hover:text-primary transition">Dashboard</a>
+            <a th:href="@{/index}" class="text-gray-600 hover:text-primary transition">Home</a>
+            <a th:href="@{/vehicles}" class="text-gray-600 hover:text-primary transition">Vehicles</a>
+            <a th:href="@{/bookings}" class="text-gray-600 hover:text-primary transition">Bookings</a>
+        </div>
+        <div class="flex items-center space-x-4">
+            <button class="relative text-gray-700">
+                <i class="fas fa-bell text-xl"></i>
+                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+            </button>
+            <a th:href="@{/login}" class="relative text-gray-700 flex items-center">
+                <i class="fas fa-user-circle text-2xl"></i>
+                <span class="ml-2 hidden sm:inline">Login</span>
+            </a>
+        </div>
+    </div>
+</nav>
+
+<!-- 404 Error Section -->
+<section class="py-20 min-h-screen flex items-center">
+    <div class="container mx-auto px-4 text-center">
+        <div class="max-w-2xl mx-auto">
+            <!-- Animated Car Icon -->
+            <div class="mb-8 relative">
+                <i class="fas fa-car-crash text-primary text-9xl opacity-20"></i>
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <div class="text-8xl font-bold text-primary">404</div>
+                </div>
+            </div>
+
+            <!-- Error Message -->
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
+                Oops! Wrong Turn
+            </h1>
+            <p class="text-xl text-gray-600 mb-8">
+                Looks like this page took a detour. The page you're looking for doesn't exist or has been moved.
+            </p>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row justify-center gap-4 mb-12">
+                <a th:href="@{/index}"
+                   class="bg-primary text-white px-8 py-3 rounded-md font-medium hover:bg-secondary transition inline-flex items-center justify-center">
+                    <i class="fas fa-home mr-2"></i>
+                    Back to Home
+                </a>
+                <a th:href="@{/vehicles}"
+                   class="bg-accent text-white px-8 py-3 rounded-md font-medium hover:bg-yellow-600 transition inline-flex items-center justify-center">
+                    <i class="fas fa-car mr-2"></i>
+                    Browse Vehicles
+                </a>
+            </div>
+
+            <!-- Helpful Links -->
+            <div class="bg-white rounded-lg shadow-md p-6 max-w-lg mx-auto">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Looking for something?</h3>
+                <div class="grid grid-cols-2 gap-4 text-left">
+                    <a th:href="@{/vehicles}" class="text-primary hover:text-secondary flex items-center">
+                        <i class="fas fa-arrow-right mr-2 text-sm"></i>
+                        View All Vehicles
+                    </a>
+                    <a th:href="@{/bookings}" class="text-primary hover:text-secondary flex items-center">
+                        <i class="fas fa-arrow-right mr-2 text-sm"></i>
+                        My Bookings
+                    </a>
+                    <a th:href="@{/dashboard}" class="text-primary hover:text-secondary flex items-center">
+                        <i class="fas fa-arrow-right mr-2 text-sm"></i>
+                        Dashboard
+                    </a>
+                    <a th:href="@{/index#contact}" class="text-primary hover:text-secondary flex items-center">
+                        <i class="fas fa-arrow-right mr-2 text-sm"></i>
+                        Contact Support
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-gray-800 text-gray-300 py-6">
+    <div class="container mx-auto px-4 text-center">
+        <div class="flex items-center justify-center mb-2">
+            <i class="fas fa-car text-primary text-2xl mr-2"></i>
+            <span class="text-2xl font-bold">
+                    Vijay<span class="text-primary">Rentals</span>
+                </span>
+        </div>
+        <p class="text-sm text-gray-400">
+            &copy; 2023 VijayRentals. All rights reserved.
+        </p>
+    </div>
+</footer>
+</body>
+</html>

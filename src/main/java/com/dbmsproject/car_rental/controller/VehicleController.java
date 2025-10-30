@@ -3,48 +3,57 @@ package com.dbmsproject.car_rental.controller;
 import com.dbmsproject.car_rental.dto.VehicleDto;
 import com.dbmsproject.car_rental.service.VehicleService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
 @Controller
-@RequestMapping("/api/vehicles")
 @AllArgsConstructor
 public class VehicleController {
     private VehicleService vehicleService;
 
-    @PostMapping
-    public ResponseEntity<VehicleDto> createVehicle(@RequestBody VehicleDto vehicleDto) {
-        VehicleDto savedVehicle = vehicleService.createVehicle(vehicleDto);
-        return new ResponseEntity<>(savedVehicle, HttpStatus.CREATED);
+    @GetMapping("/vehicles/register")
+    public String showRegisterVehicleForm(Model model) {
+        model.addAttribute("vehicle", new VehicleDto());
+        return "register_vehicle";
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<VehicleDto> getVehicleById(@PathVariable("id") Long vehicleId) {
-        VehicleDto vehicleDto = vehicleService.getVehicleById(vehicleId);
-        return ResponseEntity.ok(vehicleDto);
+    @PostMapping("/vehicles/register")
+    public String registerVehicle(@ModelAttribute("vehicle") VehicleDto vehicleDto,
+                                  BindingResult result,
+                                  RedirectAttributes redirectAttributes) {
+        if (result.hasErrors()) {
+            return "register_vehicle";
+        }
+
+        try {
+            vehicleService.createVehicle(vehicleDto);
+            redirectAttributes.addFlashAttribute("success", "Vehicle registered successfully!");
+            return "redirect:/vehicles";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to register vehicle: " + e.getMessage());
+            return "redirect:/vehicles/register";
+        }
     }
 
-    @GetMapping
-    public ResponseEntity<List<VehicleDto>> getAllVehicles() {
+    @GetMapping("/vehicles")
+    public String showVehicles(Model model) {
         List<VehicleDto> vehicles = vehicleService.getAllVehicles();
-        return ResponseEntity.ok(vehicles);
+        model.addAttribute("vehicles", vehicles);
+        return "vehicles";
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<VehicleDto> updateVehicle(@PathVariable("id") Long vehicleId, @RequestBody VehicleDto vehicleDto) {
-        VehicleDto updatedVehicle = vehicleService.updateVehicle(vehicleId, vehicleDto);
-        return ResponseEntity.ok(updatedVehicle);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteVehicle(@PathVariable("id") Long vehicleId) {
-        vehicleService.deleteVehicle(vehicleId);
-        return ResponseEntity.ok("Vehicle deleted successfully");
+    @GetMapping("/vehicles/{id}")
+    public String showVehicleDetail(@PathVariable Long id, Model model) {
+        VehicleDto vehicle = vehicleService.getVehicleById(id);
+        model.addAttribute("vehicle", vehicle);
+        return "vehicle_detail";
     }
 }
