@@ -57,17 +57,28 @@ public class VehicleController {
         return "/uploads/vehicles/" + filename;
     }
 
-    @GetMapping("/vehicles")
-    public String showVehicles(Model model) {
-        List<VehicleDto> vehicles = vehicleService.getAllVehicles();
-        model.addAttribute("vehicles", vehicles);
-        return "vehicles";
-    }
-
     @GetMapping("/vehicles/{id}")
     public String showVehicleDetail(@PathVariable Long id, Model model) {
         VehicleDto vehicle = vehicleService.getVehicleById(id);
         model.addAttribute("vehicle", vehicle);
         return "vehicle_detail";
+    }
+
+    @GetMapping("/vehicles")
+    public String showVehicles(
+            @RequestParam(value = "category", required = false) String category,
+            @RequestParam(value = "status", required = false) String status,
+            @RequestParam(value = "minPrice", required = false) Double minPrice,
+            @RequestParam(value = "maxPrice", required = false) Double maxPrice,
+            Model model) {
+
+        List<VehicleDto> vehicles = vehicleService.getFilteredVehicles(category, status, minPrice, maxPrice);
+        model.addAttribute("vehicles", vehicles);
+        model.addAttribute("selectedCategory", category);
+        model.addAttribute("selectedStatus", status);
+        model.addAttribute("minPrice", minPrice);
+        model.addAttribute("maxPrice", maxPrice);
+
+        return "vehicles";
     }
 }

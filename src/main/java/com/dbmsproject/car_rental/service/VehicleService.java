@@ -15,5 +15,5 @@ public interface VehicleService {
     List<VehicleDto> getVehiclesByStatus(VehicleStatus status);
     List<VehicleDto> getVehiclesByCategory(String category);
     List<VehicleDto> getVehiclesByPriceRange(Double minPrice, Double maxPrice);
-    List<VehicleDto> getVehiclesByMake(String make);
+    List<VehicleDto> getFilteredVehicles(String category, String status, Double minPrice, Double maxPrice);
 }

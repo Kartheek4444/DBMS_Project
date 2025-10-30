@@ -76,37 +76,26 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public List<VehicleDto> getVehiclesByStatus(VehicleStatus status) {
-        List<Vehicle> vehicles = vehicleRepository.findByStatus(status);
-        return vehicles.stream()
-                .map(VehicleMapper::toVehicleDto)
-                .collect(Collectors.toList());
+        return getFilteredVehicles(null, status.name(), null, null);
     }
 
     @Override
     public List<VehicleDto> getVehiclesByCategory(String category) {
-        VehicleCategory vehicleCategory = VehicleCategory.valueOf(category.toUpperCase());
-        List<Vehicle> vehicles = vehicleRepository.findByCategory(vehicleCategory);
-        return vehicles.stream()
-                .map(VehicleMapper::toVehicleDto)
-                .collect(Collectors.toList());
+        return getFilteredVehicles(category, null, null, null);
     }
 
     @Override
     public List<VehicleDto> getVehiclesByPriceRange(Double minPrice, Double maxPrice) {
-        List<Vehicle> vehicles = vehicleRepository.findByPricePerDayBetween(
-                BigDecimal.valueOf(minPrice),
-                BigDecimal.valueOf(maxPrice)
-        );
-        return vehicles.stream()
-                .map(VehicleMapper::toVehicleDto)
-                .collect(Collectors.toList());
+        return getFilteredVehicles(null, null, minPrice, maxPrice);
     }
 
-    @Override
-    public List<VehicleDto> getVehiclesByMake(String make) {
-        List<Vehicle> vehicles = vehicleRepository.findByMake(make);
-        return vehicles.stream()
-                .map(VehicleMapper::toVehicleDto)
-                .collect(Collectors.toList());
+    public List<VehicleDto> getFilteredVehicles(String category, String status, Double minPrice, Double maxPrice) {
+        VehicleCategory catEnum = (category == null || category.isBlank()) ? null : VehicleCategory.valueOf(category.toUpperCase());
+        VehicleStatus statusEnum = (status == null || status.isBlank()) ? null : VehicleStatus.valueOf(status.toUpperCase());
+        BigDecimal min = (minPrice == null) ? null : BigDecimal.valueOf(minPrice);
+        BigDecimal max = (maxPrice == null) ? null : BigDecimal.valueOf(maxPrice);
+
+        List<Vehicle> vehicles = vehicleRepository.findByFilters(catEnum, statusEnum, min, max);
+        return vehicles.stream().map(VehicleMapper::toVehicleDto).collect(Collectors.toList());
     }
 }

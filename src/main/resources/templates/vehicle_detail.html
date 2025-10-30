@@ -118,9 +118,6 @@
                   <!-- Vehicle Info -->
                   <div>
                       <h1 class="text-3xl font-bold mb-2" th:text="${vehicle.make + ' ' + vehicle.model}">Toyota Camry</h1>
-                      <p class="text-gray-600 mb-4">
-                          Vehicle ID: <span class="font-medium" th:text="${vehicle.vehicleId}">VH001</span>
-                      </p>
                       <p class="text-lg text-primary font-semibold mb-4" th:text="'$' + ${vehicle.pricePerDay} + ' / day'">$45 / day</p>
 
                       <div class="grid grid-cols-2 gap-4 mb-6">

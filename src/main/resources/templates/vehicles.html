@@ -128,7 +128,7 @@
         <div class="bg-white rounded-lg shadow-md overflow-hidden">
             <!-- Filter Section -->
             <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
-                <div class="flex flex-col lg:flex-row lg:items-end gap-4">
+                <form th:action="@{/vehicles}" method="get" class="flex flex-col lg:flex-row lg:items-end gap-4">
                     <!-- Filter Controls -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 flex-1">
                         <!-- Category Filter -->
@@ -136,11 +136,12 @@
                             <label class="block text-sm font-medium text-gray-700 mb-2">
                                 <i class="fas fa-tag mr-1 text-primary"></i>Category
                             </label>
-                            <select id="categoryFilter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                            <select name="category" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
                                 <option value="">All Categories</option>
                                 <option th:each="cat : ${T(com.dbmsproject.car_rental.model.VehicleCategory).values()}"
                                         th:value="${cat}"
-                                        th:text="${cat}"></option>
+                                        th:text="${cat}"
+                                        th:selected="${cat.name() == selectedCategory}"></option>
                             </select>
                         </div>
 
@@ -149,11 +150,12 @@
                             <label class="block text-sm font-medium text-gray-700 mb-2">
                                 <i class="fas fa-info-circle mr-1 text-primary"></i>Status
                             </label>
-                            <select id="statusFilter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                            <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
                                 <option value="">All Status</option>
                                 <option th:each="status : ${T(com.dbmsproject.car_rental.model.VehicleStatus).values()}"
                                         th:value="${status}"
-                                        th:text="${status}"></option>
+                                        th:text="${status}"
+                                        th:selected="${status.name() == selectedStatus}"></option>
                             </select>
                         </div>
 
@@ -163,22 +165,25 @@
                                 <i class="fas fa-dollar-sign mr-1 text-primary"></i>Price Range ($/day)
                             </label>
                             <div class="flex items-center space-x-2">
-                                <input type="number" id="minPrice" placeholder="Min"
+                                <input type="number" name="minPrice" th:value="${minPrice}" placeholder="Min"
                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
                                 <span class="text-gray-500">-</span>
-                                <input type="number" id="maxPrice" placeholder="Max"
+                                <input type="number" name="maxPrice" th:value="${maxPrice}" placeholder="Max"
                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
                             </div>
                         </div>
                     </div>
 
-                    <!-- Clear Filters Button -->
-                    <div class="lg:mb-0">
-                        <button id="clearFilters" class="w-full lg:w-auto px-6 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition flex items-center justify-center whitespace-nowrap">
-                            <i class="fas fa-times-circle mr-2"></i>Clear Filters
+                    <!-- Action Buttons -->
+                    <div class="flex gap-2 lg:mb-0">
+                        <button type="submit" class="px-6 py-2 bg-primary text-white rounded-md hover:bg-secondary transition flex items-center justify-center whitespace-nowrap">
+                            <i class="fas fa-filter mr-2"></i>Apply Filters
                         </button>
+                        <a th:href="@{/vehicles}" class="px-6 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition flex items-center justify-center whitespace-nowrap">
+                            <i class="fas fa-times-circle mr-2"></i>Clear
+                        </a>
                     </div>
-                </div>
+                </form>
             </div>
 
 
@@ -196,29 +201,26 @@
                     </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                    <tr th:each="vehicle : ${vehicles}" class="hover:bg-gray-100 cursor-pointer vehicle-row"
-                        th:onclick="|window.location='/vehicles/' + ${vehicle.vehicleId}|"
-                        th:attr="data-category=${vehicle.category}, data-status=${vehicle.status}, data-price=${vehicle.pricePerDay}">
-                    <td class="px-6 py-4" th:text="${vehicle.vehicleId}">VH001</td>
-                        <td class="px-6 py-4" th:text="${vehicle.make + ' ' + vehicle.model}">Toyota Camry</td>
-                        <td class="px-6 py-4" th:text="${vehicle.year}">2022</td>
-                        <td class="px-6 py-4" th:text="${vehicle.category}">Sedan</td>
-                        <td class="px-6 py-4" th:text="'$' + ${vehicle.pricePerDay}">$45</td>
+                    <tr th:each="vehicle : ${vehicles}" class="hover:bg-gray-100 cursor-pointer"
+                        th:onclick="|window.location='/vehicles/' + ${vehicle.vehicleId}|">
+                        <td class="px-6 py-4" th:text="${vehicle.vehicleId}"></td>
+                        <td class="px-6 py-4" th:text="${vehicle.make + ' ' + vehicle.model}"></td>
+                        <td class="px-6 py-4" th:text="${vehicle.year}"></td>
+                        <td class="px-6 py-4" th:text="${vehicle.category}"></td>
+                        <td class="px-6 py-4" th:text="'$' + ${vehicle.pricePerDay}"></td>
                         <td class="px-6 py-4">
-          <span class="px-2 py-1 text-xs rounded-full"
-                th:classappend="${vehicle.status.name() == 'AVAILABLE' ? 'status-available' :
-                                (vehicle.status.name() == 'RENTED' ? 'status-rented' : 'status-maintenance')}"
-                th:text="${vehicle.status}">Available</span>
+            <span class="px-2 py-1 text-xs rounded-full"
+                  th:classappend="${vehicle.status.name() == 'AVAILABLE' ? 'status-available' :
+                                  (vehicle.status.name() == 'RENTED' ? 'status-rented' : 'status-maintenance')}"
+                  th:text="${vehicle.status}">Available</span>
                         </td>
                         <td class="px-6 py-4" th:text="${vehicle.currentMileage + ' km'}">15,240 km</td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(vehicles)}">
                         <td colspan="7" class="px-6 py-4 text-center text-gray-500">No vehicles found</td>
                     </tr>
-                    <tr id="noResults" style="display: none;">
-                        <td colspan="7" class="px-6 py-4 text-center text-gray-500">No vehicles match the selected filters</td>
-                    </tr>
                     </tbody>
+
                 </table>
             </div>
 
@@ -241,67 +243,16 @@
     </footer>
 
     <!-- Filter Script -->
-    <script>
-        const categoryFilter = document.getElementById('categoryFilter');
-        const statusFilter = document.getElementById('statusFilter');
-        const minPriceInput = document.getElementById('minPrice');
-        const maxPriceInput = document.getElementById('maxPrice');
-        const clearFiltersBtn = document.getElementById('clearFilters');
-        const rows = document.querySelectorAll('.vehicle-row');
-        const noResultsRow = document.getElementById('noResults');
+  <script>
+      // Mobile menu toggle
+      const mobileMenuButton = document.getElementById('mobile-menu-button');
+      const mobileMenu = document.getElementById('mobile-menu');
 
-        function applyFilters() {
-          const selectedCategory = categoryFilter.value.toUpperCase();
-          const selectedStatus = statusFilter.value.toUpperCase();
-          const minPrice = parseFloat(minPriceInput.value) || 0;
-          const maxPrice = parseFloat(maxPriceInput.value) || Infinity;
-
-          let visibleCount = 0;
-
-          rows.forEach(row => {
-            const category = row.dataset.category.toUpperCase();
-            const status = row.dataset.status.toUpperCase();
-            const price = parseFloat(row.dataset.price);
-
-            const categoryMatch = !selectedCategory || category === selectedCategory;
-            const statusMatch = !selectedStatus || status === selectedStatus;
-            const priceMatch = price >= minPrice && price <= maxPrice;
-
-            if (categoryMatch && statusMatch && priceMatch) {
-              row.style.display = '';
-              visibleCount++;
-            } else {
-              row.style.display = 'none';
-            }
-          });
-
-          // Show/hide no results message
-          noResultsRow.style.display = visibleCount === 0 ? '' : 'none';
-        }
-
-        function clearFilters() {
-          categoryFilter.value = '';
-          statusFilter.value = '';
-          minPriceInput.value = '';
-          maxPriceInput.value = '';
-          applyFilters();
-        }
-
-        // Event listeners
-        categoryFilter.addEventListener('change', applyFilters);
-        statusFilter.addEventListener('change', applyFilters);
-        minPriceInput.addEventListener('input', applyFilters);
-        maxPriceInput.addEventListener('input', applyFilters);
-        clearFiltersBtn.addEventListener('click', clearFilters);
-
-        // Mobile menu toggle
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const mobileMenu = document.getElementById('mobile-menu');
-
-        mobileMenuButton?.addEventListener('click', () => {
+      mobileMenuButton?.addEventListener('click', () => {
           mobileMenu.classList.toggle('hidden');
-        });
-    </script>
+      });
+  </script>
+
 
   </body>
 </html>
