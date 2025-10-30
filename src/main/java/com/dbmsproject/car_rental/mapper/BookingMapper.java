@@ -6,10 +6,6 @@ import com.dbmsproject.car_rental.model.Booking;
 public class BookingMapper {
 
     public static BookingDto toDto(Booking booking) {
-        if (booking == null) {
-            return null;
-        }
-
         return BookingDto.builder()
                 .bookingId(booking.getBookingId())
                 .customerId(booking.getCustomer().getCustomerId())
@@ -22,6 +18,7 @@ public class BookingMapper {
                 .bookingDate(booking.getBookingDate())
                 .status(booking.getStatus())
                 .depositAmount(booking.getDepositAmount())
+                .totalAmount(booking.getTotalAmount())
                 .build();
     }
 

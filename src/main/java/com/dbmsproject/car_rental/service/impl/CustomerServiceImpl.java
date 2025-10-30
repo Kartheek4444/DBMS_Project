@@ -7,6 +7,7 @@ import com.dbmsproject.car_rental.mapper.CustomerMapper;
 import com.dbmsproject.car_rental.model.Customer;
 import com.dbmsproject.car_rental.repository.CustomerRepository;
 import com.dbmsproject.car_rental.service.CustomerService;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -108,5 +109,13 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customer = customerRepository.findById(customerId).orElseThrow(() ->
                 new ResourceNotFoundException("Customer not found with id: " + customerId));
         customerRepository.delete(customer);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public CustomerDto getCustomerByEmail(String email) {
+        Customer customer = customerRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+        return CustomerMapper.toCustomerDto(customer);
     }
 }

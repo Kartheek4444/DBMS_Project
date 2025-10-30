@@ -154,10 +154,14 @@
                           and a spacious interior—perfect for city and highway drives.
                       </p>
 
-                      <button class="bg-primary text-white px-6 py-3 rounded-md font-medium hover:bg-secondary transition"
-                              th:disabled="${vehicle.status.name() != 'AVAILABLE'}">
-                          <span th:if="${vehicle.status.name() == 'AVAILABLE'}">Book Now</span>
-                          <span th:if="${vehicle.status.name() != 'AVAILABLE'}">Not Available</span>
+                      <a th:href="@{/bookings/new(vehicleId=${vehicle.vehicleId})}"
+                         class="inline-block bg-primary text-white px-6 py-3 rounded-md font-medium hover:bg-secondary transition text-center"
+                         th:if="${vehicle.status.name() == 'AVAILABLE'}">
+                          <i class="fas fa-calendar-check mr-2"></i>Book Now
+                      </a>
+                      <button class="bg-gray-400 text-white px-6 py-3 rounded-md font-medium cursor-not-allowed"
+                              th:if="${vehicle.status.name() != 'AVAILABLE'}" disabled>
+                          <i class="fas fa-ban mr-2"></i>Not Available
                       </button>
                   </div>
               </div>

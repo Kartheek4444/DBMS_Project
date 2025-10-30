@@ -14,6 +14,7 @@ public interface CustomerService {
     Customer findByEmail(String email);
     boolean validateCustomer(String email, String password);
     void deleteCustomer(Long customerId);
+    CustomerDto getCustomerByEmail(String email);
 }
 
 

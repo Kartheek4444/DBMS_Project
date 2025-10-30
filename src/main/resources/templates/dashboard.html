@@ -1,441 +1,431 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>VijayRentals - Vehicle Rental Management</title>
+    <title>VijayRentals - Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
     <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              primary: "#3b82f6",
-              secondary: "#1e40af",
-              accent: "#f59e0b",
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3b82f6",
+                        secondary: "#1e40af",
+                        accent: "#f59e0b",
+                    },
+                    fontFamily: {
+                        poppins: ["Poppins", "sans-serif"],
+                    },
+                },
             },
-            fontFamily: {
-              poppins: ["Poppins", "sans-serif"],
-            },
-          },
-        },
-      };
+        };
     </script>
+
     <style>
-      .hero-bg {
-        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
-          url("https://images.unsplash.com/photo-1486496572940-2bb2341fdbdf?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80");
-        background-size: cover;
-        background-position: center;
-      }
-      .dashboard-card {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-      }
-      .dashboard-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-      }
-      .vehicle-card {
-        transition: transform 0.3s ease;
-      }
-      .vehicle-card:hover {
-        transform: translateY(-5px);
-      }
-      .status-available {
-        background-color: #d1fae5;
-        color: #065f46;
-      }
-      .status-rented {
-        background-color: #fef3c7;
-        color: #92400e;
-      }
-      .status-maintenance {
-        background-color: #fee2e2;
-        color: #991b1b;
-      }
-      .status-pending {
-        background-color: #e0e7ff;
-        color: #3730a3;
-      }
-
-      .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1.5rem;
-      }
-
-      .table-container {
-        overflow-x: auto;
-      }
-
-      .booking-form {
-        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-        border-radius: 12px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-      }
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        main {
+            flex: 1;
+        }
+        .dashboard-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .status-available {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        .status-rented {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        .status-pending {
+            background-color: #e0e7ff;
+            color: #3730a3;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+        .booking-form {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
     </style>
-  </head>
-  <body class="font-poppins bg-gray-50">
-  <style>
-      body {
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-      }
-      main {
-        flex: 1;
-      }
-  </style>
-    <!-- Navigation -->
-    <nav class="bg-white shadow-md sticky top-0 z-50">
-      <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+</head>
+
+<body class="font-poppins bg-gray-50">
+<!-- Navigation -->
+<nav class="bg-white shadow-md sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
         <div class="flex items-center">
-          <i class="fas fa-car text-primary text-2xl mr-2"></i>
-          <a href="index.html" class="text-2xl font-bold text-gray-800">
-            Vijay<span class="text-primary">Rentals</span>
-          </a>
+            <i class="fas fa-car text-primary text-2xl mr-2"></i>
+            <a th:href="@{/index}" class="text-2xl font-bold text-gray-800">
+                Vijay<span class="text-primary">Rentals</span>
+            </a>
         </div>
 
         <div class="hidden md:flex space-x-8">
-          <a th:href="@{/dashboard}" class="text-primary font-medium">Dashboard</a>
-          <a th:href="@{/}" class="text-gray-600 hover:text-primary transition">Home</a>
-          <a th:href="@{/vehicles}" class="text-gray-600 hover:text-primary transition">Vehicles</a>
-          <a th:href="@{/bookings}" class="text-gray-600 hover:text-primary transition">Bookings</a>
+            <a th:href="@{/dashboard}" class="text-primary font-medium">Dashboard</a>
+            <a th:href="@{/index}" class="text-gray-600 hover:text-primary transition">Home</a>
+            <a th:href="@{/vehicles}" class="text-gray-600 hover:text-primary transition">Vehicles</a>
+            <a th:href="@{/bookings}" class="text-gray-600 hover:text-primary transition">Bookings</a>
         </div>
 
         <div class="flex items-center space-x-4">
-          <button class="relative text-gray-700">
-            <i class="fas fa-bell text-xl"></i>
-            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
-          </button>
-          <a th:href="@{/login}" class="relative text-gray-700 flex items-center">
-            <i class="fas fa-user-circle text-2xl"></i>
-            <span class="ml-2 hidden sm:inline">Login</span>
-          </a>
-          <button id="mobile-menu-button" class="md:hidden text-gray-600 focus:outline-none">
-            <i class="fas fa-bars text-xl"></i>
-          </button>
+            <button class="relative text-gray-700">
+                <i class="fas fa-bell text-xl"></i>
+                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+            </button>
+            <a th:href="@{/login}" class="relative text-gray-700 flex items-center">
+                <i class="fas fa-user-circle text-2xl"></i>
+                <span class="ml-2 hidden sm:inline">Login</span>
+            </a>
+            <button id="mobile-menu-button" class="md:hidden text-gray-600 focus:outline-none">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
         </div>
-      </div>
+    </div>
 
-      <!-- Mobile Menu -->
-      <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200">
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200">
         <a th:href="@{/dashboard}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Dashboard</a>
-        <a th:href="@{/}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Home</a>
+        <a th:href="@{/index}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Home</a>
         <a th:href="@{/vehicles}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Vehicles</a>
         <a th:href="@{/bookings}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Bookings</a>
-      </div>
-    </nav>
+    </div>
+</nav>
 
-    <script>
-      // Simple toggle for mobile menu
-      const btn = document.getElementById('mobile-menu-button');
-      const menu = document.getElementById('mobile-menu');
-      btn.addEventListener('click', () => {
-        menu.classList.toggle('hidden');
-      });
-    </script>
-
-    <!-- Dashboard Section -->
-  <main>
+<!-- Main Content -->
+<main>
     <section class="py-8">
-      <div class="container mx-auto px-4">
-        <h1 class="text-3xl font-bold mb-2">Dashboard Overview</h1>
-        <p class="text-gray-600 mb-6">
-          Welcome back! Here's what's happening with your rental business today.
-        </p>
+        <div class="container mx-auto px-4">
+            <!-- Page Header -->
+            <h1 class="text-3xl font-bold mb-2">Dashboard Overview</h1>
+            <p class="text-gray-600 mb-6">
+                Welcome back! Here's what's happening with your rental business today.
+            </p>
 
-        <!-- Stats Cards -->
-        <div class="stats-grid mb-8">
-          <div class="dashboard-card bg-white p-6 rounded-lg shadow-md">
-            <div class="flex justify-between items-start">
-              <div>
-                <p class="text-gray-500">Total Vehicles</p>
-                <h3 class="text-2xl font-bold">42</h3>
-              </div>
-              <div class="bg-primary bg-opacity-10 p-3 rounded-full">
-                <i class="fas fa-car text-primary text-xl"></i>
-              </div>
-            </div>
-            <div class="mt-4">
-              <span class="text-green-500 text-sm font-medium"
-                >+2 this month</span
-              >
-            </div>
-          </div>
+            <!-- Stats Cards -->
+            <div class="stats-grid mb-8">
+                <div class="dashboard-card bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-500">Total Vehicles</p>
+                            <h3 class="text-2xl font-bold">42</h3>
+                        </div>
+                        <div class="bg-primary bg-opacity-10 p-3 rounded-full">
+                            <i class="fas fa-car text-primary text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <span class="text-green-500 text-sm font-medium">+2 this month</span>
+                    </div>
+                </div>
 
-          <div class="dashboard-card bg-white p-6 rounded-lg shadow-md">
-            <div class="flex justify-between items-start">
-              <div>
-                <p class="text-gray-500">Active Bookings</p>
-                <h3 class="text-2xl font-bold">18</h3>
-              </div>
-              <div class="bg-accent bg-opacity-10 p-3 rounded-full">
-                <i class="fas fa-calendar-check text-accent text-xl"></i>
-              </div>
-            </div>
-            <div class="mt-4">
-              <span class="text-green-500 text-sm font-medium">+5 today</span>
-            </div>
-          </div>
+                <div class="dashboard-card bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-500">Active Bookings</p>
+                            <h3 class="text-2xl font-bold">18</h3>
+                        </div>
+                        <div class="bg-accent bg-opacity-10 p-3 rounded-full">
+                            <i class="fas fa-calendar-check text-accent text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <span class="text-green-500 text-sm font-medium">+5 today</span>
+                    </div>
+                </div>
 
-          <div class="dashboard-card bg-white p-6 rounded-lg shadow-md">
-            <div class="flex justify-between items-start">
-              <div>
-                <p class="text-gray-500">Revenue</p>
-                <h3 class="text-2xl font-bold">$12,480</h3>
-              </div>
-              <div class="bg-green-500 bg-opacity-10 p-3 rounded-full">
-                <i class="fas fa-dollar-sign text-green-500 text-xl"></i>
-              </div>
-            </div>
-            <div class="mt-4">
-              <span class="text-green-500 text-sm font-medium"
-                >+12% this month</span
-              >
-            </div>
-          </div>
+                <div class="dashboard-card bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-500">Revenue</p>
+                            <h3 class="text-2xl font-bold">$12,480</h3>
+                        </div>
+                        <div class="bg-green-500 bg-opacity-10 p-3 rounded-full">
+                            <i class="fas fa-dollar-sign text-green-500 text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <span class="text-green-500 text-sm font-medium">+12% this month</span>
+                    </div>
+                </div>
 
-          <div class="dashboard-card bg-white p-6 rounded-lg shadow-md">
-            <div class="flex justify-between items-start">
-              <div>
-                <p class="text-gray-500">Maintenance</p>
-                <h3 class="text-2xl font-bold">5</h3>
-              </div>
-              <div class="bg-red-500 bg-opacity-10 p-3 rounded-full">
-                <i class="fas fa-tools text-red-500 text-xl"></i>
-              </div>
+                <div class="dashboard-card bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-500">Maintenance</p>
+                            <h3 class="text-2xl font-bold">5</h3>
+                        </div>
+                        <div class="bg-red-500 bg-opacity-10 p-3 rounded-full">
+                            <i class="fas fa-tools text-red-500 text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <span class="text-red-500 text-sm font-medium">2 overdue</span>
+                    </div>
+                </div>
             </div>
-            <div class="mt-4">
-              <span class="text-red-500 text-sm font-medium">2 overdue</span>
+
+            <!-- Quick Actions -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                <!-- New Booking Form -->
+                <div class="booking-form p-6 text-white">
+                    <h2 class="text-2xl font-bold mb-4">Create New Booking</h2>
+                    <form th:action="@{/bookings/create}" method="post">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block mb-2">Customer</label>
+                                <select name="customerId" class="w-full p-2 rounded text-gray-800" required>
+                                    <option value="">Select Customer</option>
+                                    <option value="CUST001">Rajesh Kumar (CUST001)</option>
+                                    <option value="CUST002">Priya Sharma (CUST002)</option>
+                                    <option value="CUST003">Anil Patel (CUST003)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block mb-2">Vehicle</label>
+                                <select name="vehicleId" class="w-full p-2 rounded text-gray-800" required>
+                                    <option value="">Select Vehicle</option>
+                                    <option value="VH001">Toyota Camry (VH001)</option>
+                                    <option value="VH002">Honda CR-V (VH002)</option>
+                                    <option value="VH003">Ford Explorer (VH003)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block mb-2">Pickup Date</label>
+                                <input type="date" name="pickupDate" class="w-full p-2 rounded text-gray-800" required />
+                            </div>
+                            <div>
+                                <label class="block mb-2">Return Date</label>
+                                <input type="date" name="returnDate" class="w-full p-2 rounded text-gray-800" required />
+                            </div>
+                        </div>
+                        <button type="submit" class="mt-4 bg-accent text-white px-6 py-2 rounded font-medium hover:bg-yellow-600 transition">
+                            Create Booking
+                        </button>
+                    </form>
+                </div>
+
+                <!-- New Staff Registration -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-xl font-bold mb-4">Register New Staff</h2>
+                    <!-- Success Message -->
+                    <div th:if="${successMessage}" class="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        <span th:text="${successMessage}"></span>
+                    </div>
+
+                    <!-- Error Message -->
+                    <div th:if="${errorMessage}" class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                        <i class="fas fa-exclamation-circle mr-2"></i>
+                        <span th:text="${errorMessage}"></span>
+                    </div>
+                    <form th:action="@{/staff/register}" method="post" action="/staff/register">
+                    <div class="space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                                    <input type="text" name="firstName" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                                    <input type="text" name="lastName" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                <input type="email" name="email" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                                <input type="tel" name="phone" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Position</label>
+                                    <input type="text" name="position" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Hire Date</label>
+                                    <input type="date" name="hireDate" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Manager (Optional)</label>
+                                <select name="managerId" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                                    <option value="">-- Select Manager --</option>
+                                    <!-- These options should be dynamically loaded from your backend -->
+                                    <option value="1">Manager Name 1</option>
+                                    <option value="2">Manager Name 2</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="mt-4 w-full bg-primary text-white px-6 py-2 rounded-md font-medium hover:bg-secondary transition">
+                            <i class="fas fa-user-plus mr-2"></i>Register Staff
+                        </button>
+                    </form>
+                </div>
+
             </div>
-          </div>
+
+            <!-- Bookings Table with Filters -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <!-- Filter Section -->
+                <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+                    <form th:action="@{/dashboard}" method="get" class="flex flex-col lg:flex-row lg:items-end gap-4">
+                        <!-- Filter Controls -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 flex-1">
+                            <!-- Status Filter -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-info-circle mr-1 text-primary"></i>Status
+                                </label>
+                                <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                                    <option value="">All Statuses</option>
+                                    <option value="PENDING" th:selected="${selectedStatus?.name() == 'PENDING'}">Pending</option>
+                                    <option value="CONFIRMED" th:selected="${selectedStatus?.name() == 'CONFIRMED'}">Confirmed</option>
+                                    <option value="COMPLETED" th:selected="${selectedStatus?.name() == 'COMPLETED'}">Completed</option>
+                                    <option value="CANCELLED" th:selected="${selectedStatus?.name() == 'CANCELLED'}">Cancelled</option>
+                                </select>
+                            </div>
+
+                            <!-- Start Date Filter -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-calendar-alt mr-1 text-primary"></i>Start Date
+                                </label>
+                                <input type="date" name="startDate"
+                                       th:value="${selectedStartDate != null ? #temporals.format(selectedStartDate, 'yyyy-MM-dd') : ''}"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+                            </div>
+
+                            <!-- End Date Filter -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-calendar-check mr-1 text-primary"></i>End Date
+                                </label>
+                                <input type="date" name="endDate"
+                                       th:value="${selectedEndDate != null ? #temporals.format(selectedEndDate, 'yyyy-MM-dd') : ''}"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex gap-2 lg:mb-0">
+                            <button type="submit" class="px-6 py-2 bg-primary text-white rounded-md hover:bg-secondary transition flex items-center justify-center whitespace-nowrap">
+                                <i class="fas fa-filter mr-2"></i>Apply Filters
+                            </button>
+                            <a th:href="@{/dashboard}" class="px-6 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition flex items-center justify-center whitespace-nowrap">
+                                <i class="fas fa-times-circle mr-2"></i>Clear
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Table Section -->
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h2 class="text-xl font-bold">Current Bookings</h2>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Booking ID</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vehicle</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pickup Date</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Return Date</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                        <tr th:if="${bookings == null or bookings.isEmpty()}">
+                            <td colspan="7" class="px-6 py-4 text-center text-gray-500">No bookings found</td>
+                        </tr>
+                        <tr th:each="booking : ${bookings}" class="hover:bg-gray-100 cursor-pointer">
+                            <td class="px-6 py-4 whitespace-nowrap font-medium" th:text="${booking.bookingId}">BK001</td>
+                            <td class="px-6 py-4 whitespace-nowrap" th:text="${booking.customerName}">Customer Name</td>
+                            <td class="px-6 py-4 whitespace-nowrap"
+                                th:text="${booking.vehicleMake + ' ' + booking.vehicleModel}">Vehicle Name</td>
+                            <td class="px-6 py-4 whitespace-nowrap" th:text="${#temporals.format(booking.pickupDate, 'MMM dd, yyyy')}">Sep 15, 2023</td>
+                            <td class="px-6 py-4 whitespace-nowrap" th:text="${#temporals.format(booking.returnDate, 'MMM dd, yyyy')}">Sep 20, 2023</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 py-1 text-xs rounded-full"
+                          th:classappend="${booking.status?.name() == 'CONFIRMED'} ? 'status-available' :
+                                          (${booking.status?.name() == 'PENDING'} ? 'status-pending' :
+                                          (${booking.status?.name() == 'COMPLETED'} ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'))"
+                          th:text="${booking.status}">Status</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <a th:href="@{/bookings/{id}(id=${booking.bookingId})}" class="text-blue-500 hover:text-blue-700 mr-2" title="View">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a th:href="@{/bookings/{id}/edit(id=${booking.bookingId})}" class="text-primary hover:text-secondary mr-2" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form th:action="@{/bookings/{id}/delete(id=${booking.bookingId})}" method="post" style="display: inline;">
+                                    <button type="submit" class="text-red-500 hover:text-red-700" title="Delete"
+                                            onclick="return confirm('Are you sure you want to delete this booking?')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
         </div>
-
-        <!-- Quick Actions -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-          <!-- New Booking Form -->
-          <div class="booking-form p-6 text-white">
-            <h2 class="text-2xl font-bold mb-4">Create New Booking</h2>
-            <form>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label class="block mb-2">Customer</label>
-                  <select class="w-full p-2 rounded text-gray-800">
-                    <option>Select Customer</option>
-                    <option>Rajesh Kumar (CUST001)</option>
-                    <option>Priya Sharma (CUST002)</option>
-                    <option>Anil Patel (CUST003)</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block mb-2">Vehicle</label>
-                  <select class="w-full p-2 rounded text-gray-800">
-                    <option>Select Vehicle</option>
-                    <option>Toyota Camry (VH001)</option>
-                    <option>Honda CR-V (VH002)</option>
-                    <option>Ford Explorer (VH003)</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block mb-2">Pickup Date</label>
-                  <input type="date" class="w-full p-2 rounded text-gray-800" />
-                </div>
-                <div>
-                  <label class="block mb-2">Return Date</label>
-                  <input type="date" class="w-full p-2 rounded text-gray-800" />
-                </div>
-              </div>
-              <button
-                type="submit"
-                class="mt-4 bg-accent text-white px-6 py-2 rounded font-medium hover:bg-yellow-600 transition"
-              >
-                Create Booking
-              </button>
-            </form>
-          </div>
-
-          <!-- Recent Activity -->
-          <div class="bg-white p-6 rounded-lg shadow-md">
-            <h2 class="text-xl font-bold mb-4">Recent Activity</h2>
-            <div class="space-y-4">
-              <div class="flex items-start">
-                <div class="bg-green-100 p-2 rounded-full mr-3">
-                  <i class="fas fa-check-circle text-green-500"></i>
-                </div>
-                <div>
-                  <p class="font-medium">New booking created</p>
-                  <p class="text-gray-500 text-sm">
-                    Booking #BK2023091501 for Toyota Camry
-                  </p>
-                  <p class="text-gray-400 text-xs">2 hours ago</p>
-                </div>
-              </div>
-              <div class="flex items-start">
-                <div class="bg-blue-100 p-2 rounded-full mr-3">
-                  <i class="fas fa-car text-blue-500"></i>
-                </div>
-                <div>
-                  <p class="font-medium">Vehicle maintenance completed</p>
-                  <p class="text-gray-500 text-sm">
-                    Honda Civic service completed
-                  </p>
-                  <p class="text-gray-400 text-xs">5 hours ago</p>
-                </div>
-              </div>
-              <div class="flex items-start">
-                <div class="bg-yellow-100 p-2 rounded-full mr-3">
-                  <i class="fas fa-exclamation-triangle text-yellow-500"></i>
-                </div>
-                <div>
-                  <p class="font-medium">Payment overdue</p>
-                  <p class="text-gray-500 text-sm">
-                    Booking #BK2023091203 payment pending
-                  </p>
-                  <p class="text-gray-400 text-xs">1 day ago</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Current Bookings Table -->
-        <div class="bg-white rounded-lg shadow-md overflow-hidden">
-          <div class="px-6 py-4 border-b border-gray-200">
-            <h2 class="text-xl font-bold">Current Bookings</h2>
-          </div>
-          <div class="table-container">
-            <table class="min-w-full divide-y divide-gray-200">
-              <thead class="bg-gray-50">
-                <tr>
-                  <th
-                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Booking ID
-                  </th>
-                  <th
-                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Customer
-                  </th>
-                  <th
-                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Vehicle
-                  </th>
-                  <th
-                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Pickup Date
-                  </th>
-                  <th
-                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Return Date
-                  </th>
-                  <th
-                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Status
-                  </th>
-                  <th
-                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody class="bg-white divide-y divide-gray-200">
-                <tr>
-                  <td class="px-6 py-4 whitespace-nowrap">BK2023091501</td>
-                  <td class="px-6 py-4 whitespace-nowrap">Rajesh Kumar</td>
-                  <td class="px-6 py-4 whitespace-nowrap">Toyota Camry</td>
-                  <td class="px-6 py-4 whitespace-nowrap">2023-09-15</td>
-                  <td class="px-6 py-4 whitespace-nowrap">2023-09-20</td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <span
-                      class="px-2 py-1 text-xs rounded-full status-available"
-                      >Active</span
-                    >
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <button class="text-primary hover:text-secondary mr-2">
-                      <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="text-red-500 hover:text-red-700">
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="px-6 py-4 whitespace-nowrap">BK2023091402</td>
-                  <td class="px-6 py-4 whitespace-nowrap">Priya Sharma</td>
-                  <td class="px-6 py-4 whitespace-nowrap">Honda CR-V</td>
-                  <td class="px-6 py-4 whitespace-nowrap">2023-09-14</td>
-                  <td class="px-6 py-4 whitespace-nowrap">2023-09-18</td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <span class="px-2 py-1 text-xs rounded-full status-rented"
-                      >Rented</span
-                    >
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <button class="text-primary hover:text-secondary mr-2">
-                      <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="text-red-500 hover:text-red-700">
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="px-6 py-4 whitespace-nowrap">BK2023091203</td>
-                  <td class="px-6 py-4 whitespace-nowrap">Anil Patel</td>
-                  <td class="px-6 py-4 whitespace-nowrap">Ford Explorer</td>
-                  <td class="px-6 py-4 whitespace-nowrap">2023-09-12</td>
-                  <td class="px-6 py-4 whitespace-nowrap">2023-09-19</td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <span class="px-2 py-1 text-xs rounded-full status-pending"
-                      >Pending Payment</span
-                    >
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <button class="text-primary hover:text-secondary mr-2">
-                      <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="text-red-500 hover:text-red-700">
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
     </section>
-  </main>
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-gray-300 py-6">
-      <div class="container mx-auto px-4 text-center">
-      <div class="flex items-center justify-center mb-2">
-          <i class="fas fa-car text-primary text-2xl mr-2"></i>
-          <span class="text-2xl font-bold">
-          Vijay<span class="text-primary">Rentals</span>
-          </span>
-      </div>
-      <p class="text-sm text-gray-400">
-          &copy; 2023 VijayRentals. All rights reserved.
-      </p>
-      </div>
-  </footer>
+</main>
 
-  </body>
+<!-- Footer -->
+<footer class="bg-gray-800 text-gray-300 py-6">
+    <div class="container mx-auto px-4 text-center">
+        <div class="flex items-center justify-center mb-2">
+            <i class="fas fa-car text-primary text-2xl mr-2"></i>
+            <span class="text-2xl font-bold">
+                    Vijay<span class="text-primary">Rentals</span>
+                </span>
+        </div>
+        <p class="text-sm text-gray-400">
+            &copy; 2023 VijayRentals. All rights reserved.
+        </p>
+    </div>
+</footer>
+
+<!-- Scripts -->
+<script>
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    mobileMenuButton?.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+    });
+</script>
+</body>
 </html>

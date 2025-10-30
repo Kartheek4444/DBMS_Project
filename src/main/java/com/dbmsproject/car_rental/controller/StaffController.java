@@ -5,16 +5,19 @@ import com.dbmsproject.car_rental.service.StaffService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
+import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-@RestController
-@RequestMapping("/api/staff")
+@Controller
 @AllArgsConstructor
 public class StaffController {
 
-    private StaffService staffService;
+    private final StaffService staffService;
 
     @PostMapping
     public ResponseEntity<StaffDto> createStaff(@RequestBody StaffDto staffDto) {
@@ -22,7 +25,7 @@ public class StaffController {
         return new ResponseEntity<>(savedStaff, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/staff/{id}")
     public ResponseEntity<StaffDto> getStaffById(@PathVariable("id") Long staffId) {
         StaffDto staffDto = staffService.getStaffById(staffId);
         return ResponseEntity.ok(staffDto);
@@ -34,15 +37,47 @@ public class StaffController {
         return ResponseEntity.ok(staff);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/staff/{id}")
     public ResponseEntity<StaffDto> updateStaff(@PathVariable("id") Long staffId, @RequestBody StaffDto staffDto) {
         StaffDto updatedStaff = staffService.updateStaff(staffId, staffDto);
         return ResponseEntity.ok(updatedStaff);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/staff/{id}")
     public ResponseEntity<String> deleteStaff(@PathVariable("id") Long staffId) {
         staffService.deleteStaff(staffId);
         return ResponseEntity.ok("Staff deleted successfully");
+    }
+
+    @PostMapping("/staff/register")
+    public String registerStaff(
+            @RequestParam String firstName,
+            @RequestParam String lastName,
+            @RequestParam String email,
+            @RequestParam String phone,
+            @RequestParam String position,
+            @RequestParam LocalDate hireDate,
+            @RequestParam(required = false) Long managerId,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+            StaffDto staffDto = StaffDto.builder()
+                    .firstName(firstName)
+                    .lastName(lastName)
+                    .email(email)
+                    .phone(phone)
+                    .position(position)
+                    .hireDate(hireDate)
+                    .managerId(managerId)
+                    .isActive(true)
+                    .build();
+
+            staffService.createStaff(staffDto);
+            redirectAttributes.addFlashAttribute("successMessage", "Staff registered successfully!");
+            return "redirect:/dashboard";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Registration failed: " + e.getMessage());
+            return "redirect:/dashboard";
+        }
     }
 }

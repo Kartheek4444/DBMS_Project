@@ -50,4 +50,13 @@ public class Booking {
     protected void onCreate() {
         if (this.bookingDate == null) this.bookingDate = LocalDateTime.now();
     }
+
+    public BigDecimal getTotalAmount() {
+        if (vehicle == null || pickupDate == null || returnDate == null) return BigDecimal.ZERO;
+        BigDecimal pricePerDay = vehicle.getPricePerDay();
+        if (pricePerDay == null) return BigDecimal.ZERO;
+        long days = java.time.temporal.ChronoUnit.DAYS.between(pickupDate.toLocalDate(), returnDate.toLocalDate());
+        if (days <= 0) days = 1;
+        return pricePerDay.multiply(BigDecimal.valueOf(days));
+    }
 }

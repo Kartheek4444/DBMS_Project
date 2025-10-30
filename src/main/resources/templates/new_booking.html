@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>New Booking - VijayRentals</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3b82f6",
+                        secondary: "#1e40af",
+                        accent: "#f59e0b",
+                    },
+                    fontFamily: {
+                        poppins: ["Poppins", "sans-serif"],
+                    },
+                },
+            },
+        };
+    </script>
+</head>
+<body class="font-poppins bg-gray-50">
+<style>
+    body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+    main {
+        flex: 1;
+    }
+</style>
+
+<!-- Navigation (copy from vehicle_detail.html) -->
+<nav class="bg-white shadow-md sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+        <div class="flex items-center">
+            <i class="fas fa-car text-primary text-2xl mr-2"></i>
+            <a th:href="@{/index}" class="text-2xl font-bold text-gray-800">
+                Vijay<span class="text-primary">Rentals</span>
+            </a>
+        </div>
+        <div class="hidden md:flex space-x-8">
+            <a th:href="@{/dashboard}" class="text-gray-600 hover:text-primary transition">Dashboard</a>
+            <a th:href="@{/index}" class="text-gray-600 hover:text-primary transition">Home</a>
+            <a th:href="@{/vehicles}" class="text-gray-600 hover:text-primary transition">Vehicles</a>
+            <a th:href="@{/bookings}" class="text-primary font-medium">Bookings</a>
+        </div>
+    </div>
+</nav>
+
+<!-- Booking Form Section -->
+<main>
+    <section class="py-12">
+        <div class="container mx-auto px-4 max-w-3xl">
+            <div class="bg-white rounded-lg shadow-md p-8">
+                <h1 class="text-3xl font-bold mb-6 text-center">Create New Booking</h1>
+
+                <form th:action="@{/bookings/create}" method="post" th:object="${booking}">
+                    <!-- Hidden Vehicle ID -->
+                    <input type="hidden" th:field="*{vehicleId}" />
+
+                    <!-- Hidden Status (default: PENDING) -->
+                    <input type="hidden" th:field="*{status}" th:value="PENDING" />
+
+                    <!-- Vehicle Information -->
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                        <h3 class="font-semibold text-lg mb-2">
+                            <i class="fas fa-car mr-2 text-primary"></i>Selected Vehicle
+                        </h3>
+                        <p class="text-gray-700" th:text="${vehicleName}">Toyota Camry 2022</p>
+                        <p class="text-primary font-semibold" th:text="'$' + ${pricePerDay} + ' / day'">$45 / day</p>
+                    </div>
+
+                    <!-- Customer Selection -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-user mr-1 text-primary"></i>Customer
+                        </label>
+                        <select th:field="*{customerId}" required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                            <option value="">Select Customer</option>
+                            <option th:each="customer : ${customers}"
+                                    th:value="${customer.customerId}"
+                                    th:text="${customer.firstName + ' ' + customer.lastName}">
+                                Customer Name
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Pickup Date -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-calendar-alt mr-1 text-primary"></i>Pickup Date
+                        </label>
+                        <input type="datetime-local" th:field="*{pickupDate}" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+                    </div>
+
+                    <!-- Return Date -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-calendar-check mr-1 text-primary"></i>Return Date
+                        </label>
+                        <input type="datetime-local" th:field="*{returnDate}" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+                    </div>
+
+                    <!-- Deposit Amount -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-dollar-sign mr-1 text-primary"></i>Deposit Amount
+                        </label>
+                        <input type="number" th:field="*{depositAmount}" step="0.01" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                               placeholder="Enter deposit amount" />
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex gap-4 justify-end">
+                        <a th:href="@{/vehicles/{id}(id=${vehicleId})}"
+                           class="px-6 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition">
+                            <i class="fas fa-times mr-2"></i>Cancel
+                        </a>
+                        <button type="submit"
+                                class="px-6 py-2 bg-primary text-white rounded-md hover:bg-secondary transition">
+                            <i class="fas fa-check mr-2"></i>Create Booking
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- Footer (copy from vehicle_detail.html) -->
+<footer class="bg-gray-800 text-gray-300 py-6">
+    <div class="container mx-auto px-4 text-center">
+        <div class="flex items-center justify-center mb-2">
+            <i class="fas fa-car text-primary text-2xl mr-2"></i>
+            <span class="text-2xl font-bold">
+                    Vijay<span class="text-primary">Rentals</span>
+                </span>
+        </div>
+        <p class="text-sm text-gray-400">&copy; 2023 VijayRentals. All rights reserved.</p>
+    </div>
+</footer>
+</body>
+</html>
