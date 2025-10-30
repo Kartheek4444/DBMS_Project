@@ -29,7 +29,11 @@
             url("https://images.unsplash.com/photo-1486496572940-2bb2341fdbdf?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80");
           background-size: cover;
           background-position: center;
+          min-height: calc(100vh - 64px - 88px); /* viewport height minus nav and footer */
+          display: flex;
+          align-items: center;
         }
+
         .auth-card {
           transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
@@ -40,6 +44,16 @@
     </style>
 </head>
 <body class="font-poppins bg-gray-50">
+<style>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    main {
+      flex: 1;
+    }
+</style>
 <!-- Navigation -->
 <nav class="bg-white shadow-md sticky top-0 z-50">
     <div class="container mx-auto px-4 py-3 flex justify-between items-center">
@@ -91,9 +105,9 @@
 </script>
 
 <!-- Auth Section -->
-<!-- Auth Section -->
+<main>
 <section class="auth-bg py-20">
-    <div class="container mx-auto px-4">
+    <div class="container mx-auto px-4 py-20">
         <div class="max-w-md mx-auto">
             <!-- Login Form -->
             <div id="login-form" class="auth-card bg-white p-8 rounded-lg shadow-lg">
@@ -170,7 +184,7 @@
         </div>
     </div>
 </section>
-
+</main>
 
 <!-- Footer -->
 <footer class="bg-gray-800 text-gray-300 py-6">

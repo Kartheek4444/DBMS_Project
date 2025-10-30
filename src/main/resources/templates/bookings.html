@@ -45,6 +45,16 @@
     </style>
   </head>
   <body class="font-poppins bg-gray-50">
+  <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+      main {
+        flex: 1;
+      }
+  </style>
     <!-- Navigation -->
     <nav class="bg-white shadow-md sticky top-0 z-50">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
@@ -96,6 +106,7 @@
       </script>
 
     <!-- Bookings Section -->
+  <main>
     <section class="py-10">
       <div class="container mx-auto px-4">
         <h1 class="text-3xl font-bold mb-4">My Bookings</h1>
@@ -156,7 +167,7 @@
         </div>
       </div>
     </section>
-
+  </main>
     <!-- Footer -->
     <footer class="bg-gray-800 text-gray-300 py-6">
         <div class="container mx-auto px-4 text-center">

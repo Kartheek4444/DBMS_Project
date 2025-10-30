@@ -25,6 +25,16 @@
     </script>
 </head>
 <body class="font-poppins bg-gray-50">
+<style>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    main {
+      flex: 1;
+    }
+</style>
 <!-- Navigation -->
 <nav class="bg-white shadow-md sticky top-0 z-50">
     <div class="container mx-auto px-4 py-3 flex justify-between items-center">
@@ -54,6 +64,7 @@
 </nav>
 
 <!-- 404 Error Section -->
+<main>
 <section class="py-20 min-h-screen flex items-center">
     <div class="container mx-auto px-4 text-center">
         <div class="max-w-2xl mx-auto">
@@ -112,6 +123,7 @@
         </div>
     </div>
 </section>
+</main>
 
 <!-- Footer -->
 <footer class="bg-gray-800 text-gray-300 py-6">

@@ -5,19 +5,22 @@ import com.dbmsproject.car_rental.service.VehicleService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.UUID;
 
 @Controller
 @AllArgsConstructor
 public class VehicleController {
     private VehicleService vehicleService;
+    private static final String UPLOAD_DIR = "uploads/vehicles/";
 
     @GetMapping("/vehicles/register")
     public String showRegisterVehicleForm(Model model) {
@@ -25,22 +28,33 @@ public class VehicleController {
         return "register_vehicle";
     }
 
-    @PostMapping("/vehicles/register")
-    public String registerVehicle(@ModelAttribute("vehicle") VehicleDto vehicleDto,
-                                  BindingResult result,
-                                  RedirectAttributes redirectAttributes) {
-        if (result.hasErrors()) {
-            return "register_vehicle";
-        }
 
+    @PostMapping("/vehicles/register")
+    public String registerVehicle(@ModelAttribute VehicleDto vehicleDto,
+                                  @RequestParam(value = "imageFile", required = false) MultipartFile imageFile) {
         try {
+            if (imageFile != null && !imageFile.isEmpty()) {
+                String imagePath = saveImage(imageFile);
+                vehicleDto.setImageUrl(imagePath);
+            }
             vehicleService.createVehicle(vehicleDto);
-            redirectAttributes.addFlashAttribute("success", "Vehicle registered successfully!");
             return "redirect:/vehicles";
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Failed to register vehicle: " + e.getMessage());
-            return "redirect:/vehicles/register";
+        } catch (IOException e) {
+            return "redirect:/vehicles/register?error=upload";
         }
+    }
+
+    private String saveImage(MultipartFile file) throws IOException {
+        Files.createDirectories(Paths.get(UPLOAD_DIR));
+
+        String originalFilename = file.getOriginalFilename();
+        String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+        String filename = UUID.randomUUID().toString() + extension;
+
+        Path filepath = Paths.get(UPLOAD_DIR + filename);
+        Files.copy(file.getInputStream(), filepath, StandardCopyOption.REPLACE_EXISTING);
+
+        return "/uploads/vehicles/" + filename;
     }
 
     @GetMapping("/vehicles")

@@ -59,6 +59,8 @@ public class VehicleServiceImpl implements VehicleService {
         vehicle.setPricePerDay(vehicleDto.getPricePerDay());
         vehicle.setCurrentMileage(vehicleDto.getCurrentMileage());
         vehicle.setStatus(vehicleDto.getStatus());
+        vehicle.setImageUrl(vehicleDto.getImageUrl());
+        vehicle.setDescription(vehicleDto.getDescription());
 
         Vehicle updatedVehicle = vehicleRepository.save(vehicle);
         return VehicleMapper.toVehicleDto(updatedVehicle);
