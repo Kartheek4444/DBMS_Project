@@ -48,4 +48,13 @@ public class Staff {
 
     @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StaffMiddleName> middleNames = new ArrayList<>();
+
+    public String getName() {
+        StringBuilder fullName = new StringBuilder(firstName);
+        for (StaffMiddleName middleName : middleNames) {
+            fullName.append(" ").append(middleName.getMiddleName());
+        }
+        fullName.append(" ").append(lastName);
+        return fullName.toString();
+    }
 }

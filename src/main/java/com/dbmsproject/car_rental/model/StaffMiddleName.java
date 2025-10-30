@@ -19,4 +19,8 @@ public class StaffMiddleName {
     @MapsId("staffId") // maps staffId inside composite key
     @JoinColumn(name = "staff_id", nullable = false)
     private Staff staff;
+
+    public char[] getMiddleName() {
+        return id.getMiddleName().toCharArray();
+    }
 }

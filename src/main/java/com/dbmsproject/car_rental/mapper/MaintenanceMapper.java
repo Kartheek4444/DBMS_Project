@@ -7,7 +7,7 @@ import com.dbmsproject.car_rental.model.Vehicle;
 
 public class MaintenanceMapper {
 
-    public static MaintenanceDto toDto(Maintenance maintenance) {
+    public MaintenanceDto toDto(Maintenance maintenance) {
         if (maintenance == null) {
             return null;
         }

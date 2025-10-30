@@ -17,8 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class MaintenanceServiceImpl implements MaintenanceService {
 
-    private final MaintenanceRepository maintenanceRepository;
-    private final MaintenanceMapper maintenanceMapper;
+    private MaintenanceRepository maintenanceRepository;
+    private MaintenanceMapper maintenanceMapper;
 
     @Override
     public MaintenanceDto createMaintenance(MaintenanceDto maintenanceDto) {
@@ -33,7 +33,7 @@ public class MaintenanceServiceImpl implements MaintenanceService {
     public MaintenanceDto getMaintenance(Long maintenanceId) {
         return maintenanceRepository.findById(maintenanceId)
                 .map(maintenanceMapper::toDto)
-                .orElseThrow(() -> new ResourceNotFoundException("Maintenance", "id", maintenanceId));
+                .orElseThrow(() -> new ResourceNotFoundException("Maintenance id not found"));
     }
 
     @Override
@@ -46,7 +46,7 @@ public class MaintenanceServiceImpl implements MaintenanceService {
     @Override
     public MaintenanceDto updateMaintenance(Long maintenanceId, MaintenanceDto maintenanceDto) {
         if (!maintenanceRepository.existsById(maintenanceId)) {
-            throw new ResourceNotFoundException("Maintenance", "id", maintenanceId);
+            throw new ResourceNotFoundException("Maintenance not found with id: " + maintenanceId);
         }
         maintenanceDto.setMaintenanceId(maintenanceId);
         Maintenance maintenance = maintenanceMapper.toEntity(maintenanceDto);
@@ -57,10 +57,11 @@ public class MaintenanceServiceImpl implements MaintenanceService {
     @Override
     public void deleteMaintenance(Long maintenanceId) {
         if (!maintenanceRepository.existsById(maintenanceId)) {
-            throw new ResourceNotFoundException("Maintenance", "id", maintenanceId);
+            throw new ResourceNotFoundException("Maintenance not found with id: " + maintenanceId);
         }
         maintenanceRepository.deleteById(maintenanceId);
     }
+
 
     @Override
     @Transactional(readOnly = true)
