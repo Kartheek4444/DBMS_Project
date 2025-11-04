@@ -62,4 +62,13 @@ public class Customer {
     protected void onCreate() {
         this.registrationDate = LocalDate.now();
     }
+
+    public String getName() {
+        StringBuilder fullName = new StringBuilder(firstName);
+            for (CustomerMiddleName middleName : middleNames) {         
+                fullName.append(" ").append(middleName.getMiddleName());
+        }
+        fullName.append(" ").append(lastName);
+        return fullName.toString();
+    }
 }

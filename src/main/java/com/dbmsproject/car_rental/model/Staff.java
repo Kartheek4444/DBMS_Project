@@ -30,6 +30,10 @@ public class Staff {
     private String position;
     private LocalDate hireDate;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Roles role = Roles.STAFF;
+
     @ManyToOne
     @JoinColumn(
         name = "managed_id",

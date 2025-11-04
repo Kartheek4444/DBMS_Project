@@ -19,4 +19,8 @@ public class CustomerMiddleName {
     @MapsId("customerId")
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
+
+    public char[] getMiddleName() {
+        return id.getMiddleName().toCharArray();
+    }
 }
