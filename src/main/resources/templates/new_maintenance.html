@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>New Booking - VijayRentals</title>
+    <title>New Maintenance - VijayRentals</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -23,18 +23,18 @@
             },
         };
     </script>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        main {
+            flex: 1;
+        }
+    </style>
 </head>
 <body class="font-poppins bg-gray-50">
-<style>
-    body {
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-    }
-    main {
-        flex: 1;
-    }
-</style>
 
 <!-- Navigation -->
 <nav class="bg-white shadow-md sticky top-0 z-50">
@@ -49,10 +49,9 @@
             <a th:href="@{/dashboard}" class="text-gray-600 hover:text-primary transition">Dashboard</a>
             <a th:href="@{/index}" class="text-gray-600 hover:text-primary transition">Home</a>
             <a th:href="@{/vehicles}" class="text-gray-600 hover:text-primary transition">Vehicles</a>
-            <a th:href="@{/bookings}" class="text-primary font-medium">Bookings</a>
-            <a th:href="@{/maintenance}" class="text-gray-600 hover:text-primary transition">Maintenance</a>
+            <a th:href="@{/bookings}" class="text-gray-600 hover:text-primary transition">Bookings</a>
+            <a th:href="@{/maintenance}" class="text-primary font-medium">Maintenance</a>
         </div>
-
         <div class="flex items-center space-x-4">
             <button class="relative text-gray-700">
                 <i class="fas fa-bell text-xl"></i>
@@ -67,8 +66,6 @@
             </button>
         </div>
     </div>
-
-    <!-- Mobile Menu -->
     <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200">
         <a th:href="@{/dashboard}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Dashboard</a>
         <a th:href="@{/index}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Home</a>
@@ -78,91 +75,120 @@
     </div>
 </nav>
 
-<script>
-    // Simple toggle for mobile menu
-    const btn = document.getElementById('mobile-menu-button');
-    const menu = document.getElementById('mobile-menu');
-    btn.addEventListener('click', () => {
-      menu.classList.toggle('hidden');
-    });
-</script>
-
-<!-- Booking Form Section -->
+<!-- Maintenance Form Section -->
 <main>
     <section class="py-12">
         <div class="container mx-auto px-4 max-w-3xl">
             <div class="bg-white rounded-lg shadow-md p-8">
-                <h1 class="text-3xl font-bold mb-6 text-center">Create New Booking</h1>
+                <h1 class="text-3xl font-bold mb-6 text-center">
+                    <span th:if="${isEdit}">Edit Maintenance Record</span>
+                    <span th:unless="${isEdit}">Create New Maintenance</span>
+                </h1>
 
-                <form th:action="@{/bookings/create}" method="post" th:object="${booking}">
-                    <!-- Hidden Vehicle ID -->
-                    <input type="hidden" th:field="*{vehicleId}" />
+                <form th:action="@{${isEdit ? '/maintenance/update/' + maintenanceDto.maintenanceId : '/maintenance/create'}}"
+                      method="post" th:object="${maintenanceDto}">
 
-                    <!-- Hidden Status (default: PENDING) -->
-                    <input type="hidden" th:field="*{status}" th:value="PENDING" />
-
-                    <!-- Vehicle Information -->
-                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                        <h3 class="font-semibold text-lg mb-2">
-                            <i class="fas fa-car mr-2 text-primary"></i>Selected Vehicle
-                        </h3>
-                        <p class="text-gray-700" th:text="${vehicleName}">Toyota Camry 2022</p>
-                        <p class="text-primary font-semibold" th:text="'$' + ${pricePerDay} + ' / day'">$45 / day</p>
-                    </div>
-
-                    <!-- Customer Selection -->
+                    <!-- Vehicle Selection -->
                     <div class="mb-6">
                         <label class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-user mr-1 text-primary"></i>Customer
+                            <i class="fas fa-car mr-1 text-primary"></i>Vehicle *
                         </label>
-                        <select th:field="*{customerId}" required
+                        <select th:field="*{vehicleId}" required
                                 class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
-                            <option value="">Select Customer</option>
-                            <option th:each="customer : ${customers}"
-                                    th:value="${customer.customerId}"
-                                    th:text="${customer.firstName + ' ' + customer.lastName}">
-                                Customer Name
+                            <option value="">Select Vehicle</option>
+                            <option th:each="vehicle : ${vehicles}"
+                                    th:value="${vehicle.vehicleId}"
+                                    th:text="${vehicle.make + ' ' + vehicle.model + ' (' + vehicle.licensePlate + ')'}">
+                                Vehicle Info
                             </option>
                         </select>
                     </div>
 
-                    <!-- Pickup Date -->
+                    <!-- Staff Selection -->
                     <div class="mb-6">
                         <label class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-calendar-alt mr-1 text-primary"></i>Pickup Date
+                            <i class="fas fa-user-cog mr-1 text-primary"></i>Staff Member
                         </label>
-                        <input type="datetime-local" th:field="*{pickupDate}" required
+                        <select th:field="*{staffId}"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                            <option value="">Select Staff (Optional)</option>
+                            <option th:each="staff : ${staffList}"
+                                    th:value="${staff.staffId}"
+                                    th:text="${staff.firstName + ' ' + staff.lastName + ' - ' + staff.position}">
+                                Staff Info
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Service Date -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-calendar-alt mr-1 text-primary"></i>Service Date *
+                        </label>
+                        <input type="datetime-local" th:field="*{serviceDate}" required
                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
                     </div>
 
-                    <!-- Return Date -->
+                    <!-- Service Type -->
                     <div class="mb-6">
                         <label class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-calendar-check mr-1 text-primary"></i>Return Date
+                            <i class="fas fa-wrench mr-1 text-primary"></i>Service Type *
                         </label>
-                        <input type="datetime-local" th:field="*{returnDate}" required
-                               class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
-                    </div>
-
-                    <!-- Deposit Amount -->
-                    <div class="mb-6">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-dollar-sign mr-1 text-primary"></i>Deposit Amount
-                        </label>
-                        <input type="number" th:field="*{depositAmount}" step="0.01" required
+                        <input type="text" th:field="*{serviceType}" required
                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                               placeholder="Enter deposit amount" />
+                               placeholder="e.g., Oil Change, Tire Rotation, Brake Inspection" />
+                    </div>
+
+                    <!-- Cost -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-dollar-sign mr-1 text-primary"></i>Cost
+                        </label>
+                        <input type="number" th:field="*{cost}" step="0.01" min="0"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                               placeholder="Enter maintenance cost" />
+                    </div>
+
+                    <!-- Description -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-file-alt mr-1 text-primary"></i>Description
+                        </label>
+                        <textarea th:field="*{description}" rows="4"
+                                  class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                                  placeholder="Enter detailed description of the maintenance work"></textarea>
+                    </div>
+
+                    <!-- Next Service Date -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-calendar-check mr-1 text-primary"></i>Next Service Date
+                        </label>
+                        <input type="datetime-local" th:field="*{nextServiceDate}"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+                    </div>
+
+                    <!-- Next Service Mileage -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-tachometer-alt mr-1 text-primary"></i>Next Service Mileage
+                        </label>
+                        <input type="number" th:field="*{nextServiceMileage}" min="0"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                               placeholder="Enter mileage for next service" />
                     </div>
 
                     <!-- Action Buttons -->
                     <div class="flex gap-4 justify-end">
-                        <a th:href="@{/vehicles/{id}(id=${vehicleId})}"
+                        <a th:href="@{/maintenance}"
                            class="px-6 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition">
                             <i class="fas fa-times mr-2"></i>Cancel
                         </a>
                         <button type="submit"
                                 class="px-6 py-2 bg-primary text-white rounded-md hover:bg-secondary transition">
-                            <i class="fas fa-check mr-2"></i>Create Booking
+                            <i class="fas fa-check mr-2"></i>
+                            <span th:if="${isEdit}">Update Maintenance</span>
+                            <span th:unless="${isEdit}">Create Maintenance</span>
                         </button>
                     </div>
                 </form>
@@ -171,17 +197,26 @@
     </section>
 </main>
 
-<!-- Footer (copy from vehicle_detail.html) -->
+<!-- Footer -->
 <footer class="bg-gray-800 text-gray-300 py-6">
     <div class="container mx-auto px-4 text-center">
         <div class="flex items-center justify-center mb-2">
             <i class="fas fa-car text-primary text-2xl mr-2"></i>
             <span class="text-2xl font-bold">
-                    Vijay<span class="text-primary">Rentals</span>
-                </span>
+                Vijay<span class="text-primary">Rentals</span>
+            </span>
         </div>
         <p class="text-sm text-gray-400">&copy; 2023 VijayRentals. All rights reserved.</p>
     </div>
 </footer>
+
+<script>
+    const btn = document.getElementById('mobile-menu-button');
+    const menu = document.getElementById('mobile-menu');
+    btn.addEventListener('click', () => {
+        menu.classList.toggle('hidden');
+    });
+</script>
+
 </body>
 </html>

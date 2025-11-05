@@ -31,7 +31,7 @@ public class StaffController {
         return ResponseEntity.ok(staffDto);
     }
 
-    @GetMapping
+    @GetMapping("/staff")
     public ResponseEntity<List<StaffDto>> getAllStaff() {
         List<StaffDto> staff = staffService.getAllStaff();
         return ResponseEntity.ok(staff);

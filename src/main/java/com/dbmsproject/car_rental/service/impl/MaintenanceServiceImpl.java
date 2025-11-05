@@ -4,7 +4,11 @@ import com.dbmsproject.car_rental.dto.MaintenanceDto;
 import com.dbmsproject.car_rental.exception.ResourceNotFoundException;
 import com.dbmsproject.car_rental.mapper.MaintenanceMapper;
 import com.dbmsproject.car_rental.model.Maintenance;
+import com.dbmsproject.car_rental.model.Staff;
+import com.dbmsproject.car_rental.model.Vehicle;
 import com.dbmsproject.car_rental.repository.MaintenanceRepository;
+import com.dbmsproject.car_rental.repository.StaffRepository;
+import com.dbmsproject.car_rental.repository.VehicleRepository;
 import com.dbmsproject.car_rental.service.MaintenanceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,13 +21,27 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class MaintenanceServiceImpl implements MaintenanceService {
 
-    private MaintenanceRepository maintenanceRepository;
-    private MaintenanceMapper maintenanceMapper;
+    private final MaintenanceRepository maintenanceRepository;
+    private final VehicleRepository vehicleRepository;
+    private final StaffRepository staffRepository;
+    private final MaintenanceMapper maintenanceMapper;
 
     @Override
     public MaintenanceDto createMaintenance(MaintenanceDto maintenanceDto) {
-        Maintenance maintenance = maintenanceMapper.toEntity(maintenanceDto);
-        maintenance.setMaintenanceId(null); // Ensure new record creation
+        Vehicle vehicle = vehicleRepository.findById(maintenanceDto.getVehicleId())
+                .orElseThrow(() -> new ResourceNotFoundException("Vehicle not found with id: " + maintenanceDto.getVehicleId()));
+
+        Staff staff = null;
+        if (maintenanceDto.getStaffId() != null) {
+            staff = staffRepository.findById(maintenanceDto.getStaffId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Staff not found with id: " + maintenanceDto.getStaffId()));
+        }
+
+        Maintenance maintenance = MaintenanceMapper.toEntity(maintenanceDto);
+        maintenance.setMaintenanceId(null);
+        maintenance.setVehicle(vehicle);
+        maintenance.setHandledBy(staff);
+
         Maintenance savedMaintenance = maintenanceRepository.save(maintenance);
         return maintenanceMapper.toDto(savedMaintenance);
     }
@@ -33,7 +51,7 @@ public class MaintenanceServiceImpl implements MaintenanceService {
     public MaintenanceDto getMaintenance(Long maintenanceId) {
         return maintenanceRepository.findById(maintenanceId)
                 .map(maintenanceMapper::toDto)
-                .orElseThrow(() -> new ResourceNotFoundException("Maintenance id not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Maintenance not found with id: " + maintenanceId));
     }
 
     @Override
@@ -45,12 +63,29 @@ public class MaintenanceServiceImpl implements MaintenanceService {
 
     @Override
     public MaintenanceDto updateMaintenance(Long maintenanceId, MaintenanceDto maintenanceDto) {
-        if (!maintenanceRepository.existsById(maintenanceId)) {
-            throw new ResourceNotFoundException("Maintenance not found with id: " + maintenanceId);
+        Maintenance existing = maintenanceRepository.findById(maintenanceId)
+                .orElseThrow(() -> new ResourceNotFoundException("Maintenance not found with id: " + maintenanceId));
+
+        if (maintenanceDto.getVehicleId() != null) {
+            Vehicle vehicle = vehicleRepository.findById(maintenanceDto.getVehicleId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Vehicle not found"));
+            existing.setVehicle(vehicle);
         }
-        maintenanceDto.setMaintenanceId(maintenanceId);
-        Maintenance maintenance = maintenanceMapper.toEntity(maintenanceDto);
-        Maintenance savedMaintenance = maintenanceRepository.save(maintenance);
+
+        if (maintenanceDto.getStaffId() != null) {
+            Staff staff = staffRepository.findById(maintenanceDto.getStaffId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Staff not found"));
+            existing.setHandledBy(staff);
+        }
+
+        existing.setServiceDate(maintenanceDto.getServiceDate());
+        existing.setServiceType(maintenanceDto.getServiceType());
+        existing.setCost(maintenanceDto.getCost());
+        existing.setDescription(maintenanceDto.getDescription());
+        existing.setNextServiceDate(maintenanceDto.getNextServiceDate());
+        existing.setNextServiceMileage(maintenanceDto.getNextServiceMileage());
+
+        Maintenance savedMaintenance = maintenanceRepository.save(existing);
         return maintenanceMapper.toDto(savedMaintenance);
     }
 
@@ -61,7 +96,6 @@ public class MaintenanceServiceImpl implements MaintenanceService {
         }
         maintenanceRepository.deleteById(maintenanceId);
     }
-
 
     @Override
     @Transactional(readOnly = true)

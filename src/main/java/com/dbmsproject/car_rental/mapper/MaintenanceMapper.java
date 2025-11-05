@@ -4,7 +4,9 @@ import com.dbmsproject.car_rental.dto.MaintenanceDto;
 import com.dbmsproject.car_rental.model.Maintenance;
 import com.dbmsproject.car_rental.model.Staff;
 import com.dbmsproject.car_rental.model.Vehicle;
+import org.springframework.stereotype.Component;
 
+@Component
 public class MaintenanceMapper {
 
     public MaintenanceDto toDto(Maintenance maintenance) {
