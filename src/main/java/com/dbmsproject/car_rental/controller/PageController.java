@@ -9,6 +9,7 @@ import com.dbmsproject.car_rental.model.BookingStatus;
 import com.dbmsproject.car_rental.service.BookingService;
 import com.dbmsproject.car_rental.service.CustomerService;
 import com.dbmsproject.car_rental.service.StaffService;
+import com.dbmsproject.car_rental.service.VehicleService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.security.core.Authentication;
 
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +37,7 @@ public class PageController {
     private final CustomerService customerService;
     private final StaffService staffService;
     private final BookingService bookingService;
+    private final VehicleService vehicleService;
 
     @GetMapping({"/", "/index"})
     public String homePage() {
@@ -94,25 +97,33 @@ public class PageController {
 
     @GetMapping("/dashboard")
     public String dashboardPage(
-            @RequestParam(required = false) BookingStatus status,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             Model model) {
 
         List<BookingDto> bookings;
 
         if (status != null || startDate != null || endDate != null) {
-            LocalDateTime start = startDate != null ? startDate.toLocalDate().atStartOfDay() : null;
-            LocalDateTime end = endDate != null ? endDate.toLocalDate().atTime(23, 59, 59) : null;
-            BookingStatus bookingStatus = status;
+            BookingStatus bookingStatus = (status != null) ? BookingStatus.valueOf(status) : null;
+            LocalDateTime startDateTime = (startDate != null) ? startDate.atStartOfDay() : null;
+            LocalDateTime endDateTime = (endDate != null) ? endDate.atTime(23, 59, 59) : null;
 
-            bookings = bookingService.filterBookings(null, null, bookingStatus, start, end);
+            bookings = bookingService.filterBookings(null, null, bookingStatus, startDateTime, endDateTime);
         } else {
             bookings = bookingService.getAllBookings();
         }
 
         model.addAttribute("bookings", bookings);
-        model.addAttribute("selectedStatus", status);
+
+        // Add vehicles and customers for the booking form
+        model.addAttribute("vehicles", vehicleService.getAllVehicles());
+        model.addAttribute("customers", customerService.getAllCustomers());
+
+        // Keep filter selections
+        if (status != null) {
+            model.addAttribute("selectedStatus", BookingStatus.valueOf(status));
+        }
         model.addAttribute("selectedStartDate", startDate);
         model.addAttribute("selectedEndDate", endDate);
 

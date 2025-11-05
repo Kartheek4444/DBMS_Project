@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
+import org.springframework.security.core.Authentication;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -59,13 +60,37 @@ public class BookingController {
     }
 
     @GetMapping("/bookings/new")
-    public String newBookingForm(@RequestParam Long vehicleId, Model model) {
+    public String newBookingForm(
+            @RequestParam Long vehicleId,
+            @RequestParam(required = false) Long customerId,
+            Authentication authentication,
+            Model model) {
+
         VehicleDto vehicle = vehicleService.getVehicleById(vehicleId);
         List<CustomerDto> customers = customerService.getAllCustomers();
 
         BookingDto booking = new BookingDto();
         booking.setVehicleId(vehicleId);
         booking.setStatus(BookingStatus.PENDING);
+
+        // Auto-select logged-in customer
+        if (authentication != null && authentication.isAuthenticated()) {
+            String email = authentication.getName();
+            CustomerDto loggedInCustomer = customerService.getCustomerByEmail(email);
+
+            if (loggedInCustomer != null) {
+                booking.setCustomerId(loggedInCustomer.getCustomerId());
+                model.addAttribute("selectedCustomerName",
+                        loggedInCustomer.getFirstName() + " " + loggedInCustomer.getLastName());
+            }
+        }
+        // Override with URL parameter if provided
+        else if (customerId != null) {
+            booking.setCustomerId(customerId);
+            CustomerDto customer = customerService.getCustomerById(customerId);
+            model.addAttribute("selectedCustomerName",
+                    customer.getFirstName() + " " + customer.getLastName());
+        }
 
         model.addAttribute("booking", booking);
         model.addAttribute("vehicleId", vehicleId);
@@ -75,6 +100,7 @@ public class BookingController {
 
         return "new_booking";
     }
+
 
     @PostMapping("/bookings/create")
     public String createBooking(@ModelAttribute BookingDto bookingDto) {
