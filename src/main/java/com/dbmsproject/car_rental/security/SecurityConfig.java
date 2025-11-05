@@ -1,21 +1,26 @@
 package com.dbmsproject.car_rental.security;
 
-import com.dbmsproject.car_rental.service.impl.CustomUserDetailsService;
-import lombok.RequiredArgsConstructor;
+import com.dbmsproject.car_rental.service.impl.CustomerDetailsService;
+import com.dbmsproject.car_rental.service.impl.StaffDetailsService;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-@RequiredArgsConstructor
+@EnableWebSecurity
+@AllArgsConstructor
 public class SecurityConfig {
 
-    private final CustomUserDetailsService userDetailsService;
+    private final CustomerDetailsService customerUserDetailsService;
+    private final StaffDetailsService staffUserDetailsService;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -23,38 +28,52 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        AuthenticationManagerBuilder authBuilder =
-                http.getSharedObject(AuthenticationManagerBuilder.class);
-
-        authBuilder
-                .userDetailsService(userDetailsService)
-                .passwordEncoder(passwordEncoder());
-
-        return authBuilder.build();
+    public DaoAuthenticationProvider customerAuthProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(customerUserDetailsService);
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        // Optionally set the authenticationManager explicitly on http (not required in many setups)
-        http.authenticationManager(authenticationManager(http));
+    public DaoAuthenticationProvider staffAuthProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(staffUserDetailsService);
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
+    }
 
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/signup", "/dashboard", "/vehicles/**", "/index", "/", "/css/**", "/js/**").permitAll()
+                        .requestMatchers("/", "/index","/vehicles", "/login", "/signup", "/staff_login", "/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("/bookings").hasAuthority("USER")
+                        .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
+                        .requestMatchers("/staff/**").hasAnyAuthority("STAFF", "ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
+                        .loginProcessingUrl("/login")
                         .defaultSuccessUrl("/index", true)
                         .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout")
+                        .logoutSuccessUrl("/?logout")
                         .permitAll()
                 );
 
         return http.build();
+    }
+
+    @Bean
+    public AuthenticationManager authManager(HttpSecurity http) throws Exception {
+        AuthenticationManagerBuilder authBuilder =
+                http.getSharedObject(AuthenticationManagerBuilder.class);
+        authBuilder.authenticationProvider(customerAuthProvider());
+        authBuilder.authenticationProvider(staffAuthProvider());
+        return authBuilder.build();
     }
 }

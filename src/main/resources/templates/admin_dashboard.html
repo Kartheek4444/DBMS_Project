@@ -1,85 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>VijayRentals - Admin Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: "#3b82f6",
-                        secondary: "#1e40af",
-                        accent: "#f59e0b",
-                    },
-                    fontFamily: {
-                        poppins: ["Poppins", "sans-serif"],
-                    },
-                },
-            },
-        };
-    </script>
-
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-        main {
-            flex: 1;
-        }
-        .status-active {
-            background-color: #d1fae5;
-            color: #065f46;
-        }
-        .status-inactive {
-            background-color: #fee2e2;
-            color: #991b1b;
-        }
-    </style>
-</head>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments :: head('Admin Dashboard - VijayRentals')"></head>
 
 <body class="font-poppins bg-gray-50">
 <!-- Navigation -->
-<nav class="bg-white shadow-md sticky top-0 z-50">
-    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-        <div class="flex items-center">
-            <i class="fas fa-car text-primary text-2xl mr-2"></i>
-            <a th:href="@{/}" class="text-2xl font-bold text-gray-800">
-                Vijay<span class="text-primary">Rentals</span>
-            </a>
-        </div>
-
-        <div class="hidden md:flex space-x-8">
-            <a th:href="@{/admin/dashboard}" class="text-primary font-medium">Admin Dashboard</a>
-            <a th:href="@{/dashboard}" class="text-gray-600 hover:text-primary transition">Dashboard</a>
-            <a th:href="@{/}" class="text-gray-600 hover:text-primary transition">Home</a>
-        </div>
-
-        <div class="flex items-center space-x-4">
-            <a th:href="@{/login}" class="relative text-gray-700 flex items-center">
-                <i class="fas fa-user-circle text-2xl"></i>
-                <span class="ml-2 hidden sm:inline">Admin</span>
-            </a>
-            <button id="mobile-menu-button" class="md:hidden text-gray-600 focus:outline-none">
-                <i class="fas fa-bars text-xl"></i>
-            </button>
-        </div>
-    </div>
-
-    <!-- Mobile Menu -->
-    <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200">
-        <a th:href="@{/admin/dashboard}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Admin Dashboard</a>
-        <a th:href="@{/dashboard}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Dashboard</a>
-        <a th:href="@{/}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Home</a>
-    </div>
-</nav>
+<nav th:replace="fragments :: navbar"></nav>
 
 <!-- Main Content -->
 <main>
@@ -305,19 +230,7 @@
 </main>
 
 <!-- Footer -->
-<footer class="bg-gray-800 text-gray-300 py-6 mt-8">
-    <div class="container mx-auto px-4 text-center">
-        <div class="flex items-center justify-center mb-2">
-            <i class="fas fa-car text-primary text-2xl mr-2"></i>
-            <span class="text-2xl font-bold">
-                Vijay<span class="text-primary">Rentals</span>
-            </span>
-        </div>
-        <p class="text-sm text-gray-400">
-            &copy; 2023 VijayRentals. All rights reserved.
-        </p>
-    </div>
-</footer>
+<footer th:replace="fragments :: footer"></footer>
 
 <!-- Scripts -->
 <script>

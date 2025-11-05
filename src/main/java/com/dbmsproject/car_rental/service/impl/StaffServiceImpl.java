@@ -119,10 +119,14 @@ public class StaffServiceImpl implements StaffService {
 
     @Override
     @Transactional(readOnly = true)
-    public boolean validateStaff(String email, String rawPassword) {
-        return staffRepository.findByEmail(email)
-                .map(staff -> passwordEncoder.matches(rawPassword, staff.getPassword()))
-                .orElse(false);
+    public boolean validateStaff(String email, String password) {
+        // Implement staff validation logic
+        StaffDto staff = staffRepository.getStaffByEmail(email);
+        if (staff != null && staff.getIsActive()) {
+            // Verify password (use password encoder if passwords are hashed)
+            return passwordEncoder.matches(password, staff.getPassword());
+        }
+        return false;
     }
 
     @Override

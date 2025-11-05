@@ -4,7 +4,6 @@ import com.dbmsproject.car_rental.dto.BookingDto;
 import com.dbmsproject.car_rental.dto.CustomerDto;
 import com.dbmsproject.car_rental.dto.CustomerSignupDto;
 import com.dbmsproject.car_rental.dto.StaffDto;
-import com.dbmsproject.car_rental.model.Booking;
 import com.dbmsproject.car_rental.model.BookingStatus;
 import com.dbmsproject.car_rental.service.BookingService;
 import com.dbmsproject.car_rental.service.CustomerService;
@@ -15,6 +14,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,8 +22,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.security.core.Authentication;
-
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -62,7 +60,7 @@ public class PageController {
                 // Create session for logged-in user
                 HttpSession session = request.getSession();
                 session.setAttribute("userEmail", email);
-                return "redirect:/dashboard";
+                return "redirect:/index";
             } else {
                 model.addAttribute("loginError", "Invalid email or password");
                 return "login";
@@ -95,7 +93,7 @@ public class PageController {
         }
     }
 
-    @GetMapping("/dashboard")
+    @GetMapping("/staff/dashboard")
     public String dashboardPage(
             @RequestParam(required = false) String status,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
@@ -127,7 +125,7 @@ public class PageController {
         model.addAttribute("selectedStartDate", startDate);
         model.addAttribute("selectedEndDate", endDate);
 
-        return "dashboard";
+        return "staff_dashboard";
     }
 
 
@@ -163,4 +161,34 @@ public class PageController {
 
         return "admin_dashboard";
     }
+
+    @GetMapping("/staff_login")
+    public String staffLoginPage() {
+        return "staff_login";
+    }
+
+    @PostMapping("/staff_login")
+    public String handleStaffLogin(
+            @RequestParam("username") String email,
+            @RequestParam("password") String password,
+            HttpServletRequest request,
+            Model model
+    ) {
+        try {
+            boolean isValid = staffService.validateStaff(email, password);
+            if (isValid) {
+                // Create session for logged-in staff
+                HttpSession session = request.getSession();
+                session.setAttribute("staffEmail", email);
+                return "redirect:/staff/dashboard";
+            } else {
+                model.addAttribute("loginError", "Invalid email or password");
+                return "staff_login";
+            }
+        } catch (Exception e) {
+            model.addAttribute("loginError", "An error occurred: " + e.getMessage());
+            return "staff_login";
+        }
+    }
+
 }
