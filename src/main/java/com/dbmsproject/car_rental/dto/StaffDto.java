@@ -19,6 +19,7 @@ public class StaffDto {
     private Boolean isActive;
     private String email;
     private String phone;
+    private String password;
     private String position;
     private LocalDate hireDate;
     private Long managerId;

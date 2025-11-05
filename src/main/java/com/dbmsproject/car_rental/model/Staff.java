@@ -27,7 +27,12 @@ public class Staff {
     private Boolean isActive = true;
     private String email;
     private String phone;
+
+    @Column(nullable = false)
+    private String password;
+
     private String position;
+
     private LocalDate hireDate;
 
     @Enumerated(EnumType.STRING)

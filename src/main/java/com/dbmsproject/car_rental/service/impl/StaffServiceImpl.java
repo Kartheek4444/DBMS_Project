@@ -1,3 +1,4 @@
+// java
 package com.dbmsproject.car_rental.service.impl;
 
 import com.dbmsproject.car_rental.dto.StaffDto;
@@ -11,6 +12,7 @@ import com.dbmsproject.car_rental.service.StaffService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 import java.util.Objects;
@@ -21,11 +23,13 @@ import java.util.stream.Collectors;
 public class StaffServiceImpl implements StaffService {
 
     private final StaffRepository staffRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
     public StaffDto createStaff(StaffDto staffDto) {
         Staff staff = StaffMapper.toStaff(staffDto);
+        staff.setPassword(passwordEncoder.encode(staffDto.getPassword()));
 
         // Set manager if managerId is provided
         if (staffDto.getManagerId() != null) {
@@ -78,6 +82,7 @@ public class StaffServiceImpl implements StaffService {
         existingStaff.setIsActive(staffDto.getIsActive());
         existingStaff.setEmail(staffDto.getEmail());
         existingStaff.setPhone(staffDto.getPhone());
+        existingStaff.setPassword(passwordEncoder.encode(staffDto.getPassword()));
         existingStaff.setPosition(staffDto.getPosition());
         existingStaff.setHireDate(staffDto.getHireDate());
 
@@ -114,10 +119,10 @@ public class StaffServiceImpl implements StaffService {
 
     @Override
     @Transactional(readOnly = true)
-    public boolean validateStaff(String email, String password) {
-        // Note: This is a placeholder implementation
-        // You should implement proper password hashing and validation
-        return staffRepository.findByEmail(email).isPresent();
+    public boolean validateStaff(String email, String rawPassword) {
+        return staffRepository.findByEmail(email)
+                .map(staff -> passwordEncoder.matches(rawPassword, staff.getPassword()))
+                .orElse(false);
     }
 
     @Override

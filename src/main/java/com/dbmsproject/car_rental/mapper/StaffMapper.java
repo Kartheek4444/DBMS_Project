@@ -23,6 +23,7 @@ public class StaffMapper {
                 .isActive(staff.getIsActive())
                 .email(staff.getEmail())
                 .phone(staff.getPhone())
+                .password(staff.getPassword())
                 .position(staff.getPosition())
                 .hireDate(staff.getHireDate())
                 .managerId(staff.getManager() != null ? staff.getManager().getStaffId() : null)
@@ -37,6 +38,7 @@ public class StaffMapper {
                 .isActive(staffDto.getIsActive())
                 .email(staffDto.getEmail())
                 .phone(staffDto.getPhone())
+                .password(staffDto.getPassword())
                 .position(staffDto.getPosition())
                 .hireDate(staffDto.getHireDate())
                 .build();
