@@ -81,6 +81,7 @@
                           </button>
 
                           <a th:href="@{/vehicles/{id}/edit(id=${vehicle.vehicleId})}"
+                             sec:authorize="hasAnyAuthority('STAFF', 'ADMIN')"
                              class="bg-accent text-white px-6 py-3 rounded-md font-medium hover:bg-yellow-600 transition text-center flex items-center justify-center">
                               <i class="fas fa-edit mr-2"></i>Edit
                           </a>

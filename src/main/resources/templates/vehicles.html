@@ -14,12 +14,11 @@
             <h1 class="text-3xl font-bold mb-2">Vehicle Management</h1>
             <p class="text-gray-600">Manage your rental fleet efficiently</p>
           </div>
-          <div class="mt-4 md:mt-0">
-              <a th:href="@{/vehicles/register}" class="bg-primary text-white px-4 py-2 rounded-md hover:bg-secondary transition flex items-center">
-                  <i class="fas fa-plus mr-2"></i> Add New Vehicle
-              </a>
-
-          </div>
+            <div class="mt-4 md:mt-0" sec:authorize="hasAnyAuthority('STAFF', 'ADMIN')">
+                <a th:href="@{/vehicles/register}" class="bg-primary text-white px-4 py-2 rounded-md hover:bg-secondary transition flex items-center">
+                    <i class="fas fa-plus mr-2"></i> Add New Vehicle
+                </a>
+            </div>
         </div>
       </div>
     </section>
