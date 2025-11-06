@@ -14,7 +14,13 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -128,6 +134,57 @@ public class StaffServiceImpl implements StaffService {
         Staff updatedStaff = staffRepository.save(existingStaff);
         return StaffMapper.toStaffDto(updatedStaff);
     }
+
+    @Override
+    @Transactional
+    public StaffDto updateStaffProfile(Long staffId, StaffDto staffDto, MultipartFile avatarFile) throws IOException {
+        Staff existingStaff = staffRepository.findById(staffId)
+                .orElseThrow(() -> new ResourceNotFoundException("Staff not found with id: " + staffId));
+
+        existingStaff.setFirstName(staffDto.getFirstName());
+        existingStaff.setLastName(staffDto.getLastName());
+        existingStaff.setEmail(staffDto.getEmail());
+        existingStaff.setPhone(staffDto.getPhone());
+        existingStaff.setPosition(staffDto.getPosition());
+//        existingStaff.setHireDate(staffDto.getHireDate());
+
+        // Handle middle names
+        existingStaff.getMiddleNames().clear();
+        if (staffDto.getMiddleNames() != null && !staffDto.getMiddleNames().isEmpty()) {
+            List<StaffMiddleName> middleNames = staffDto.getMiddleNames().stream()
+                    .filter(Objects::nonNull)
+                    .map(mn -> {
+                        StaffMiddleName smn = new StaffMiddleName();
+                        StaffMiddleNameId id = new StaffMiddleNameId();
+                        id.setStaffId(existingStaff.getStaffId());
+                        id.setMiddleName(mn);
+                        smn.setId(id);
+                        smn.setStaff(existingStaff);
+                        return smn;
+                    })
+                    .toList();
+            existingStaff.getMiddleNames().addAll(middleNames);
+        }
+
+        // Handle avatar upload
+        if (avatarFile != null && !avatarFile.isEmpty()) {
+            String uploadDir = "uploads/avatars/";
+            String fileName = "staff_" + staffId + "_" + System.currentTimeMillis() + "_" + avatarFile.getOriginalFilename();
+            Path uploadPath = Paths.get(uploadDir);
+
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            Path filePath = uploadPath.resolve(fileName);
+            Files.copy(avatarFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            existingStaff.setAvatarUrl("/" + uploadDir + fileName);
+        }
+
+        Staff updatedStaff = staffRepository.save(existingStaff);
+        return StaffMapper.toStaffDto(updatedStaff);
+    }
+
 
     @Override
     @Transactional(readOnly = true)

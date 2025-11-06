@@ -30,6 +30,7 @@ public class StaffMapper {
                 .role(staff.getRole().name())
                 .managerId(staff.getManager() != null ? staff.getManager().getStaffId() : null)
                 .middleNames(middleNames.isEmpty() ? null : middleNames)
+                .avatarUrl(staff.getAvatarUrl())
                 .build();
     }
 
@@ -44,6 +45,7 @@ public class StaffMapper {
                 .position(staffDto.getPosition())
                 .hireDate(staffDto.getHireDate())
                 .role(staffDto.getRole() != null ? Roles.valueOf(staffDto.getRole()) : Roles.STAFF)
+                .avatarUrl(staffDto.getAvatarUrl())
                 .build();
 
         if (staff.getMaintenances() == null) staff.setMaintenances(new ArrayList<>());

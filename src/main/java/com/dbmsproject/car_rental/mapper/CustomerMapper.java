@@ -19,6 +19,7 @@ public class CustomerMapper {
 
         return CustomerDto.builder()
                 .customerId(customer.getCustomerId())
+                .avatarUrl(customer.getAvatarUrl())
                 .firstName(customer.getFirstName())
                 .lastName(customer.getLastName())
                 .password(customer.getPassword())
@@ -39,6 +40,7 @@ public class CustomerMapper {
 
     public static Customer toCustomer(CustomerDto customerDto){
         Customer customer = Customer.builder()
+                .avatarUrl(customerDto.getAvatarUrl())
                 .firstName(customerDto.getFirstName())
                 .lastName(customerDto.getLastName())
                 .password(customerDto.getPassword())

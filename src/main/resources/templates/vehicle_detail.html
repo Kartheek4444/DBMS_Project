@@ -1,101 +1,145 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="fragments :: head('Vehicle Detail - VijayRentals')"></head>
-  <body class="font-poppins bg-gray-50">
-    <!-- Navigation -->
-    <nav th:replace="fragments :: navbar"></nav>
+<body class="font-poppins bg-gray-50">
+<!-- Navigation -->
+<nav th:replace="fragments :: navbar"></nav>
 
+<!-- Vehicle Details Section -->
+<main class="min-h-screen">
+    <section class="py-8 lg:py-12">
+        <div class="container mx-auto px-4 max-w-7xl">
+            <!-- Breadcrumb -->
+            <nav class="text-sm mb-6 flex items-center">
+                <a th:href="@{/vehicles}" class="text-gray-500 hover:text-primary transition">
+                    <i class="fas fa-arrow-left mr-2"></i>Back to Vehicles
+                </a>
+                <span class="mx-2 text-gray-400">/</span>
+                <span class="text-gray-700 font-medium" th:text="${vehicle.make + ' ' + vehicle.model}">Toyota Camry</span>
+            </nav>
 
-    <!-- Vehicle Details Section -->
-    <main>
-      <section class="py-12">
-      <div class="container mx-auto px-4">
-        <!-- Breadcrumb -->
-          <nav class="text-gray-500 text-sm mb-6">
-              <a th:href="@{/vehicles}" class="hover:text-primary">Vehicles</a> /
-              <span class="text-gray-700 font-medium" th:text="${vehicle.make + ' ' + vehicle.model}">Toyota Camry</span>
-          </nav>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+                <!-- Left Column: Image -->
+                <div class="space-y-4">
+                    <div class="relative rounded-2xl overflow-hidden shadow-2xl">
+                        <img
+                                th:src="${vehicle.imageUrl != null ? vehicle.imageUrl : 'uploads/vehicles/default_vehicle.jpeg'}"
+                                th:alt="${vehicle.make + ' ' + vehicle.model}"
+                                class="w-full h-[400px] lg:h-[500px] object-cover"
+                        />
+                        <!-- Status Badge Overlay -->
+                        <div class="absolute top-4 right-4">
+                                <span class="px-4 py-2 text-sm font-semibold rounded-full shadow-lg backdrop-blur-sm"
+                                      th:classappend="${vehicle.status.name() == 'AVAILABLE'} ? 'bg-green-100/90 text-green-800' :
+                                                     (${vehicle.status.name() == 'RENTED'} ? 'bg-blue-100/90 text-blue-800' : 'bg-yellow-100/90 text-yellow-800')"
+                                      th:text="${vehicle.status}">Available</span>
+                        </div>
+                    </div>
+                </div>
 
+                <!-- Right Column: Details -->
+                <div class="space-y-6">
+                    <!-- Title & Price -->
+                    <div>
+                        <h1 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-3"
+                            th:text="${vehicle.make + ' ' + vehicle.model}">Toyota Camry</h1>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-4xl font-bold text-primary" th:text="'$' + ${vehicle.pricePerDay}">$45</span>
+                            <span class="text-xl text-gray-500">/ day</span>
+                        </div>
+                    </div>
 
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Specifications Grid -->
+                    <div class="bg-white rounded-xl p-6 shadow-md">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Specifications</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-calendar-alt text-primary"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-500">Year</p>
+                                    <p class="font-semibold text-gray-900" th:text="${vehicle.year}">2022</p>
+                                </div>
+                            </div>
 
-          <!-- Vehicle Info -->
-              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  <!-- Vehicle Image -->
-                  <div>
-                      <img
-                              th:src="${vehicle.imageUrl != null ? vehicle.imageUrl : 'uploads/vehicles/default_vehicle.jpeg'}"
-                              th:alt="${vehicle.make + ' ' + vehicle.model}"
-                              class="rounded-lg shadow-md w-full h-auto"
-                      />
-                  </div>
+                            <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-tachometer-alt text-primary"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-500">Mileage</p>
+                                    <p class="font-semibold text-gray-900" th:text="${vehicle.currentMileage + ' km'}">15,240 km</p>
+                                </div>
+                            </div>
 
-                  <!-- Vehicle Info -->
-                  <div>
-                      <h1 class="text-3xl font-bold mb-2" th:text="${vehicle.make + ' ' + vehicle.model}">Toyota Camry</h1>
-                      <p class="text-lg text-primary font-semibold mb-4" th:text="'$' + ${vehicle.pricePerDay} + ' / day'">$45 / day</p>
+                            <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-palette text-primary"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-500">Color</p>
+                                    <p class="font-semibold text-gray-900" th:text="${vehicle.color}">Blue</p>
+                                </div>
+                            </div>
 
-                      <div class="grid grid-cols-2 gap-4 mb-6">
-                          <div class="flex items-center text-gray-700">
-                              <i class="fas fa-calendar-alt mr-2 text-primary"></i>
-                              Year: <span th:text="${vehicle.year}">2022</span>
-                          </div>
-                          <div class="flex items-center text-gray-700">
-                              <i class="fas fa-tachometer-alt mr-2 text-primary"></i>
-                              Mileage: <span th:text="${vehicle.currentMileage + ' km'}">15,240 km</span>
-                          </div>
-                          <div class="flex items-center text-gray-700">
-                              <i class="fas fa-palette mr-2 text-primary"></i>
-                              Color: <span th:text="${vehicle.color}">Blue</span>
-                          </div>
-                          <div class="flex items-center text-gray-700">
-                              <i class="fas fa-id-card mr-2 text-primary"></i>
-                              License: <span th:text="${vehicle.licensePlate}">MH01AB1234</span>
-                          </div>
-                          <div class="flex items-center text-gray-700">
-                              <i class="fas fa-car-side mr-2 text-primary"></i>
-                              Category: <span th:text="${vehicle.category}">Sedan</span>
-                          </div>
-                          <div class="flex items-center text-gray-700">
-                              <i class="fas fa-check-circle mr-2"
-                                 th:classappend="${vehicle.status.name() == 'AVAILABLE' ? 'text-green-600' :
-                           (vehicle.status.name() == 'RENTED' ? 'text-yellow-600' : 'text-red-600')}"></i>
-                              Status: <span th:text="${vehicle.status}">Available</span>
-                          </div>
-                      </div>
+                            <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-id-card text-primary"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-500">License</p>
+                                    <p class="font-semibold text-gray-900" th:text="${vehicle.licensePlate}">MH01AB1234</p>
+                                </div>
+                            </div>
 
-                      <p class="text-gray-600 mb-6" th:text="${vehicle.description != null ? vehicle.description : 'No description available'}">
-                          The Toyota Camry offers a comfortable ride, excellent fuel economy,
-                          and a spacious interior—perfect for city and highway drives.
-                      </p>
+                            <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg col-span-2">
+                                <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-car-side text-primary"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-500">Category</p>
+                                    <p class="font-semibold text-gray-900" th:text="${vehicle.category}">Sedan</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                      <div class="flex gap-4">
-                          <a th:href="@{/bookings/new(vehicleId=${vehicle.vehicleId})}"
-                             class="flex-1 bg-primary text-white px-6 py-3 rounded-md font-medium hover:bg-secondary transition text-center"
-                             th:if="${vehicle.status.name() == 'AVAILABLE'}">
-                              <i class="fas fa-calendar-check mr-2"></i>Book Now
-                          </a>
-                          <button class="flex-1 bg-gray-400 text-white px-6 py-3 rounded-md font-medium cursor-not-allowed"
-                                  th:if="${vehicle.status.name() != 'AVAILABLE'}" disabled>
-                              <i class="fas fa-ban mr-2"></i>Not Available
-                          </button>
+                    <!-- Description -->
+                    <div class="bg-white rounded-xl p-6 shadow-md">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-3">Description</h3>
+                        <p class="text-gray-600 leading-relaxed"
+                           th:text="${vehicle.description != null ? vehicle.description : 'No description available'}">
+                            The Toyota Camry offers a comfortable ride, excellent fuel economy,
+                            and a spacious interior—perfect for city and highway drives.
+                        </p>
+                    </div>
 
-                          <a th:href="@{/vehicles/{id}/edit(id=${vehicle.vehicleId})}"
-                             sec:authorize="hasAnyAuthority('STAFF', 'ADMIN')"
-                             class="bg-accent text-white px-6 py-3 rounded-md font-medium hover:bg-yellow-600 transition text-center flex items-center justify-center">
-                              <i class="fas fa-edit mr-2"></i>Edit
-                          </a>
-                      </div>
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col sm:flex-row gap-4 pt-4">
+                        <a th:href="@{/bookings/new(vehicleId=${vehicle.vehicleId})}"
+                           class="flex-1 bg-primary text-white px-8 py-4 rounded-xl font-semibold hover:bg-secondary transform hover:scale-105 transition-all duration-200 text-center shadow-lg hover:shadow-xl"
+                           th:if="${vehicle.status.name() == 'AVAILABLE'}">
+                            <i class="fas fa-calendar-check mr-2"></i>Book This Vehicle
+                        </a>
+                        <button class="flex-1 bg-gray-300 text-gray-500 px-8 py-4 rounded-xl font-semibold cursor-not-allowed opacity-60"
+                                th:if="${vehicle.status.name() != 'AVAILABLE'}" disabled>
+                            <i class="fas fa-ban mr-2"></i>Currently Unavailable
+                        </button>
 
-                  </div>
-              </div>
-
-          </div>
-      </div>
+                        <a th:href="@{/vehicles/{id}/edit(id=${vehicle.vehicleId})}"
+                           sec:authorize="hasAnyAuthority('STAFF', 'ADMIN')"
+                           class="sm:w-auto bg-accent text-white px-8 py-4 rounded-xl font-semibold hover:bg-yellow-600 transform hover:scale-105 transition-all duration-200 text-center shadow-lg hover:shadow-xl flex items-center justify-center">
+                            <i class="fas fa-edit mr-2"></i>Edit Vehicle
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
-    </main>
+</main>
 
-    <!-- Footer -->
-    <footer th:replace="fragments :: footer"></footer>
-  </body>
+<!-- Footer -->
+<footer th:replace="fragments :: footer"></footer>
+</body>
 </html>

@@ -14,6 +14,7 @@ import java.util.List;
 @Builder
 public class StaffDto {
     private Long staffId;
+    private String avatarUrl;
     private String firstName;
     private String lastName;
     private Boolean isActive;

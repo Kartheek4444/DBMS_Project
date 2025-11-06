@@ -21,6 +21,9 @@ public class Staff {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long staffId;
 
+    @Column(name = "avatar_url")
+    private String avatarUrl;
+
     private String firstName;
     private String lastName;
 

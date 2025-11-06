@@ -111,8 +111,8 @@
                         <td class="px-6 py-4" th:text="'$' + ${vehicle.pricePerDay}"></td>
                         <td class="px-6 py-4">
             <span class="px-2 py-1 text-xs rounded-full"
-                  th:classappend="${vehicle.status.name() == 'AVAILABLE' ? 'status-available' :
-                                  (vehicle.status.name() == 'RENTED' ? 'status-rented' : 'status-maintenance')}"
+                  th:classappend="${vehicle.status.name() == 'AVAILABLE'} ? 'bg-green-100 text-green-800' :
+                     (${vehicle.status.name() == 'RENTED'} ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800')"
                   th:text="${vehicle.status}">Available</span>
                         </td>
                         <td class="px-6 py-4" th:text="${vehicle.currentMileage + ' km'}">15,240 km</td>

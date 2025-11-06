@@ -12,7 +12,13 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -64,21 +70,24 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional
     public CustomerDto updateCustomer(Long customerId, CustomerDto customerDto) {
-        Customer customer = customerRepository.findById(customerId).orElseThrow(() ->
-                new ResourceNotFoundException("Customer not found with id: " + customerId));
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found with id: " + customerId));
+
         customer.setFirstName(customerDto.getFirstName());
         customer.setLastName(customerDto.getLastName());
         customer.setDateOfBirth(customerDto.getDateOfBirth());
         customer.setLicenseNo(customerDto.getLicenseNo());
         customer.setExpiryDate(customerDto.getExpiryDate());
-        customer.setEmail(customerDto.getEmail());
         customer.setPhoneNumber(customerDto.getPhoneNumber());
         customer.setDno(customerDto.getDno());
         customer.setStreet(customerDto.getStreet());
         customer.setCity(customerDto.getCity());
         customer.setState(customerDto.getState());
         customer.setPinCode(customerDto.getPinCode());
+
+        // Handle middle names
         customer.getMiddleNames().clear();
         if(customerDto.getMiddleNames() != null){
             customer.getMiddleNames().addAll(
@@ -96,10 +105,68 @@ public class CustomerServiceImpl implements CustomerService {
                             .toList()
             );
         }
-        Customer updatedCustomer = customerRepository.save(customer);
 
+        Customer updatedCustomer = customerRepository.save(customer);
         return CustomerMapper.toCustomerDto(updatedCustomer);
     }
+
+    @Override
+    @Transactional
+    public CustomerDto updateCustomerProfile(Long customerId, CustomerDto customerDto, MultipartFile avatarFile) throws IOException {
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found with id: " + customerId));
+
+        customer.setFirstName(customerDto.getFirstName());
+        customer.setLastName(customerDto.getLastName());
+        customer.setDateOfBirth(customerDto.getDateOfBirth());
+        customer.setLicenseNo(customerDto.getLicenseNo());
+        customer.setExpiryDate(customerDto.getExpiryDate());
+        customer.setPhoneNumber(customerDto.getPhoneNumber());
+        customer.setDno(customerDto.getDno());
+        customer.setStreet(customerDto.getStreet());
+        customer.setCity(customerDto.getCity());
+        customer.setState(customerDto.getState());
+        customer.setPinCode(customerDto.getPinCode());
+
+        // Handle middle names
+        customer.getMiddleNames().clear();
+        if(customerDto.getMiddleNames() != null){
+            customer.getMiddleNames().addAll(
+                    customerDto.getMiddleNames().stream()
+                            .filter(mn -> mn != null && !mn.isBlank())
+                            .map(mn -> {
+                                var cm = new com.dbmsproject.car_rental.model.CustomerMiddleName();
+                                var id = new com.dbmsproject.car_rental.model.CustomerMiddleNameId();
+                                id.setCustomerId(customer.getCustomerId());
+                                id.setMiddleName(mn);
+                                cm.setId(id);
+                                cm.setCustomer(customer);
+                                return cm;
+                            })
+                            .toList()
+            );
+        }
+
+        // Handle avatar upload
+        if (avatarFile != null && !avatarFile.isEmpty()) {
+            String uploadDir = "uploads/avatars/";
+            Path uploadPath = Paths.get(uploadDir);
+
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            String fileName = customerId + "_" + System.currentTimeMillis() + "_" + avatarFile.getOriginalFilename();
+            Path filePath = uploadPath.resolve(fileName);
+            Files.copy(avatarFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            customer.setAvatarUrl("/" + uploadDir + fileName);
+        }
+
+        Customer updatedCustomer = customerRepository.save(customer);
+        return CustomerMapper.toCustomerDto(updatedCustomer);
+    }
+
 
     @Override
     public Customer findByEmail(String email) {

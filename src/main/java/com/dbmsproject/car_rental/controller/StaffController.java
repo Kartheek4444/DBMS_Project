@@ -2,13 +2,17 @@ package com.dbmsproject.car_rental.controller;
 
 import com.dbmsproject.car_rental.dto.StaffDto;
 import com.dbmsproject.car_rental.service.StaffService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.ui.Model;
+import org.springframework.security.core.Authentication;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -18,6 +22,52 @@ import java.util.List;
 public class StaffController {
 
     private final StaffService staffService;
+
+    @GetMapping("/staff/profile")
+    public String staffProfile(Model model, Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            String email = authentication.getName();
+            StaffDto staff = staffService.getStaffByEmail(email);
+            model.addAttribute("staff", staff);
+        }
+        return "staff_profile";
+    }
+
+    @GetMapping("/staff/profile/edit")
+    public String editStaffProfile(Model model, Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            String email = authentication.getName();
+            StaffDto staff = staffService.getStaffByEmail(email);
+            model.addAttribute("staff", staff);
+        }
+        return "staff_profile_edit";
+    }
+
+    @PostMapping("/staff/profile/edit")
+    public String updateStaffProfile(
+            @Valid @ModelAttribute("staff") StaffDto staffDto,
+            @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile,
+            BindingResult result,
+            Authentication authentication,
+            Model model) {
+
+        if (result.hasErrors()) {
+            return "staff_profile_edit";
+        }
+
+        try {
+            String email = authentication.getName();
+            StaffDto existingStaff = staffService.getStaffByEmail(email);
+
+            staffService.updateStaffProfile(existingStaff.getStaffId(), staffDto, avatarFile);
+
+            model.addAttribute("successMessage", "Profile updated successfully!");
+            return "redirect:/staff/profile?success=true";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Failed to update profile: " + e.getMessage());
+            return "staff_profile_edit";
+        }
+    }
 
     @PostMapping
     public ResponseEntity<StaffDto> createStaff(@RequestBody StaffDto staffDto) {

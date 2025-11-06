@@ -182,9 +182,10 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="px-2 py-1 text-xs rounded-full"
-                                      th:classappend="${agreement.status?.name() == 'PENDING'} ? 'status-pending' :
-                                                     (${agreement.status?.name() == 'COMPLETED'} ? 'status-completed' : 'status-active')"
+                                      th:classappend="${agreement.status?.name() == 'PENDING'} ? 'bg-yellow-100 text-yellow-800' :
+                     (${agreement.status?.name() == 'COMPLETED'} ? 'bg-indigo-100 text-indigo-800' : 'bg-green-100 text-green-800')"
                                       th:text="${agreement.status}">PENDING</span>
+
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap font-semibold"
                                 th:text="${agreement.amount != null ? '$' + agreement.amount : 'N/A'}">$500.00</td>

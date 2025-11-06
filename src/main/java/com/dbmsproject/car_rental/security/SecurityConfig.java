@@ -46,24 +46,26 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/index","/vehicles","/vehicles/{id}", "/login", "/signup", "/staff_login","/admin/dashboard", "/css/**", "/js/**", "/images/**", "/uploads/**").permitAll()
-                        .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
-                        .requestMatchers("/staff/**", "/vehicles/register", "/vehicles/{id}/edit", "/bookings/{id}/edit", "/bookings/{id}/update", "/rental-agreements/**", "/maintenance/**").hasAnyAuthority("STAFF", "ADMIN")
-                        .requestMatchers("/bookings", "/bookings/new", "/bookings/create").hasAnyAuthority("USER", "STAFF", "ADMIN")
-                        .anyRequest().authenticated()
-                )
-                .formLogin(form -> form
-                        .loginPage("/login")
-                        .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/index", true)
-                        .permitAll()
-                )
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/")
-                        .permitAll()
-                );
+            .authorizeHttpRequests(auth -> auth
+                    .requestMatchers("/", "/index","/vehicles","/vehicles/{id}", "/login", "/signup", "/staff_login","/admin/dashboard", "/css/**", "/js/**", "/images/**", "/uploads/**").permitAll()
+                    .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
+                    .requestMatchers("/staff/**", "/vehicles/register", "/vehicles/{id}/edit", "/bookings/{id}/edit", "/bookings/{id}/update", "/rental-agreements/**", "/maintenance/**").hasAnyAuthority("STAFF", "ADMIN")
+                    .requestMatchers("/bookings", "/bookings/new", "/bookings/create").hasAnyAuthority("USER", "STAFF", "ADMIN")
+                    .anyRequest().authenticated()
+            )
+            .formLogin(form -> form
+                    .loginPage("/login")
+                    .loginProcessingUrl("/login")
+                    .defaultSuccessUrl("/index", true)
+                    .failureUrl("/login?error=true")
+                    .permitAll()
+            )
+            .logout(logout -> logout
+                    .logoutUrl("/logout")
+                    .logoutSuccessUrl("/")
+                    .permitAll()
+            )
+            .csrf(csrf -> csrf.disable());
 
         return http.build();
     }

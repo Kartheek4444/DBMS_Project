@@ -3,7 +3,9 @@ package com.dbmsproject.car_rental.service;
 import com.dbmsproject.car_rental.dto.CustomerDto;
 import com.dbmsproject.car_rental.dto.CustomerSignupDto;
 import com.dbmsproject.car_rental.model.Customer;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface CustomerService {
@@ -15,6 +17,7 @@ public interface CustomerService {
     boolean validateCustomer(String email, String password);
     void deleteCustomer(Long customerId);
     CustomerDto getCustomerByEmail(String email);
+    CustomerDto updateCustomerProfile(Long customerId, CustomerDto customerDto, MultipartFile avatarFile) throws IOException;
 }
 
 

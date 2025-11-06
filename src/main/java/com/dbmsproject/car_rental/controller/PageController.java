@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -113,6 +114,51 @@ public class PageController {
         return "staff_dashboard";
     }
 
+    @GetMapping("/profile")
+    public String customerProfile(Model model, Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            String email = authentication.getName();
+            CustomerDto customer = customerService.getCustomerByEmail(email);
+            model.addAttribute("customer", customer);
+        }
+        return "customer_profile";
+    }
+
+    @GetMapping("/profile/edit")
+    public String editProfile(Model model, Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            String email = authentication.getName();
+            CustomerDto customer = customerService.getCustomerByEmail(email);
+            model.addAttribute("customer", customer);
+        }
+        return "customer_profile_edit";
+    }
+
+    @PostMapping("/profile/edit")
+    public String updateProfile(
+            @Valid @ModelAttribute("customer") CustomerDto customerDto,
+            @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile,
+            BindingResult result,
+            Authentication authentication,
+            Model model) {
+
+        if (result.hasErrors()) {
+            return "customer_profile_edit";
+        }
+
+        try {
+            String email = authentication.getName();
+            CustomerDto existingCustomer = customerService.getCustomerByEmail(email);
+
+            customerService.updateCustomerProfile(existingCustomer.getCustomerId(), customerDto, avatarFile);
+
+            model.addAttribute("successMessage", "Profile updated successfully!");
+            return "redirect:/profile?success=true";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Failed to update profile: " + e.getMessage());
+            return "customer_profile_edit";
+        }
+    }
 
     @GetMapping("/bookings")
     public String bookingsPage(Model model, Authentication authentication) {

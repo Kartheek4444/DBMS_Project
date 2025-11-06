@@ -14,6 +14,7 @@ import java.util.List;
 @ToString
 public class CustomerDto {
     private Long customerId;
+    private String avatarUrl;
     private String firstName;
     private String lastName;
     private String password;

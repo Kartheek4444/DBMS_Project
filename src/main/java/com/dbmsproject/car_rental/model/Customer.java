@@ -20,6 +20,9 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long customerId;
 
+    @Column(name = "avatar_url")
+    private String avatarUrl;
+
     @Column(name = "first_name", nullable = false)
     private String firstName;
 
