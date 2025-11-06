@@ -111,7 +111,7 @@
                   <!-- Vehicle Image -->
                   <div>
                       <img
-                              th:src="${vehicle.imageUrl != null ? vehicle.imageUrl : 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=900&q=80'}"
+                              th:src="${vehicle.imageUrl != null ? vehicle.imageUrl : 'uploads/vehicles/default_vehicle.jpeg'}"
                               th:alt="${vehicle.make + ' ' + vehicle.model}"
                               class="rounded-lg shadow-md w-full h-auto"
                       />
@@ -156,15 +156,23 @@
                           and a spacious interior—perfect for city and highway drives.
                       </p>
 
-                      <a th:href="@{/bookings/new(vehicleId=${vehicle.vehicleId})}"
-                         class="inline-block bg-primary text-white px-6 py-3 rounded-md font-medium hover:bg-secondary transition text-center"
-                         th:if="${vehicle.status.name() == 'AVAILABLE'}">
-                          <i class="fas fa-calendar-check mr-2"></i>Book Now
-                      </a>
-                      <button class="bg-gray-400 text-white px-6 py-3 rounded-md font-medium cursor-not-allowed"
-                              th:if="${vehicle.status.name() != 'AVAILABLE'}" disabled>
-                          <i class="fas fa-ban mr-2"></i>Not Available
-                      </button>
+                      <div class="flex gap-4">
+                          <a th:href="@{/bookings/new(vehicleId=${vehicle.vehicleId})}"
+                             class="flex-1 bg-primary text-white px-6 py-3 rounded-md font-medium hover:bg-secondary transition text-center"
+                             th:if="${vehicle.status.name() == 'AVAILABLE'}">
+                              <i class="fas fa-calendar-check mr-2"></i>Book Now
+                          </a>
+                          <button class="flex-1 bg-gray-400 text-white px-6 py-3 rounded-md font-medium cursor-not-allowed"
+                                  th:if="${vehicle.status.name() != 'AVAILABLE'}" disabled>
+                              <i class="fas fa-ban mr-2"></i>Not Available
+                          </button>
+
+                          <a th:href="@{/vehicles/{id}/edit(id=${vehicle.vehicleId})}"
+                             class="bg-accent text-white px-6 py-3 rounded-md font-medium hover:bg-yellow-600 transition text-center flex items-center justify-center">
+                              <i class="fas fa-edit mr-2"></i>Edit
+                          </a>
+                      </div>
+
                   </div>
               </div>
 

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -81,10 +82,15 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional(readOnly = true)
     public List<BookingDto> getAllBookings() {
-        return bookingRepository.findAll().stream()
+        List<Booking> bookings = bookingRepository.findAll();
+        if (bookings.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return bookings.stream()
                 .map(BookingMapper::toDto)
                 .collect(Collectors.toList());
     }
+
 
     @Override
     @Transactional(readOnly = true)

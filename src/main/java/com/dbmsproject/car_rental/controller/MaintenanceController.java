@@ -37,19 +37,23 @@ public class MaintenanceController {
         if (vehicleId != null) {
             Page<MaintenanceDto> page = maintenanceService.getVehicleMaintenance(vehicleId, pageable);
             maintenanceList = page.getContent();
-            model.addAttribute("vehicleId", vehicleId);
+            model.addAttribute("selectedVehicleId", vehicleId);
         } else if (staffId != null) {
             Page<MaintenanceDto> page = maintenanceService.getStaffMaintenance(staffId, pageable);
             maintenanceList = page.getContent();
-            model.addAttribute("staffId", staffId);
+            model.addAttribute("selectedStaffId", staffId);
         } else {
             Page<MaintenanceDto> page = maintenanceService.getAllMaintenance(pageable);
             maintenanceList = page.getContent();
         }
 
         model.addAttribute("maintenanceList", maintenanceList);
+        model.addAttribute("vehicles", vehicleService.getAllVehicles());
+        model.addAttribute("staffList", staffService.getAllStaff());
+
         return "maintenance_page";
     }
+
 
     @GetMapping("/maintenance/{id}")
     public String getMaintenanceDetails(@PathVariable Long id, Model model) {

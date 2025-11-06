@@ -14,18 +14,34 @@ public class MaintenanceMapper {
             return null;
         }
 
-        return MaintenanceDto.builder()
+        MaintenanceDto.MaintenanceDtoBuilder builder = MaintenanceDto.builder()
                 .maintenanceId(maintenance.getMaintenanceId())
-                .vehicleId(maintenance.getVehicle() != null ? maintenance.getVehicle().getVehicleId() : null)
-                .staffId(maintenance.getHandledBy() != null ? maintenance.getHandledBy().getStaffId() : null)
+                .vehicleId(maintenance.getVehicle().getVehicleId())
                 .serviceDate(maintenance.getServiceDate())
                 .serviceType(maintenance.getServiceType())
                 .cost(maintenance.getCost())
                 .description(maintenance.getDescription())
                 .nextServiceDate(maintenance.getNextServiceDate())
-                .nextServiceMileage(maintenance.getNextServiceMileage())
-                .build();
+                .nextServiceMileage(maintenance.getNextServiceMileage());
+
+        // Add vehicle name
+        if (maintenance.getVehicle() != null) {
+            String vehicleName = maintenance.getVehicle().getMake() + " " +
+                    maintenance.getVehicle().getModel() + " (" +
+                    maintenance.getVehicle().getLicensePlate() + ")";
+            builder.vehicleName(vehicleName);
+        }
+
+        // Add staff information
+        if (maintenance.getHandledBy() != null) {
+            builder.staffId(maintenance.getHandledBy().getStaffId())
+                    .staffName(maintenance.getHandledBy().getFirstName() + " " +
+                            maintenance.getHandledBy().getLastName());
+        }
+
+        return builder.build();
     }
+
 
     public static Maintenance toEntity(MaintenanceDto dto) {
         if (dto == null) {

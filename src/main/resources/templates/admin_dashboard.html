@@ -91,45 +91,6 @@
                 <p class="text-gray-600">Manage all staff members and their information</p>
             </div>
 
-            <!-- Staff Stats -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-gray-500">Total Staff</p>
-                            <h3 class="text-2xl font-bold" th:text="${staffList != null ? staffList.size() : 0}">0</h3>
-                        </div>
-                        <div class="bg-primary bg-opacity-10 p-3 rounded-full">
-                            <i class="fas fa-users text-primary text-xl"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-gray-500">Active Staff</p>
-                            <h3 class="text-2xl font-bold text-green-600" th:text="${activeCount != null ? activeCount : 0}">0</h3>
-                        </div>
-                        <div class="bg-green-500 bg-opacity-10 p-3 rounded-full">
-                            <i class="fas fa-user-check text-green-500 text-xl"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-gray-500">Inactive Staff</p>
-                            <h3 class="text-2xl font-bold text-red-600" th:text="${inactiveCount != null ? inactiveCount : 0}">0</h3>
-                        </div>
-                        <div class="bg-red-500 bg-opacity-10 p-3 rounded-full">
-                            <i class="fas fa-user-times text-red-500 text-xl"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Quick Actions -->
             <div class="grid grid-cols-1 gap-8 mb-8">
                 <!-- New Staff Registration -->
@@ -158,6 +119,7 @@
                                     <i class="fas fa-user mr-1 text-primary"></i>First Name *
                                 </label>
                                 <input type="text" name="firstName" required
+                                       placeholder="Enter first name"
                                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
                             </div>
                             <div>
@@ -165,6 +127,7 @@
                                     <i class="fas fa-user mr-1 text-primary"></i>Last Name *
                                 </label>
                                 <input type="text" name="lastName" required
+                                       placeholder="Enter last name"
                                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
                             </div>
                         </div>
@@ -176,6 +139,7 @@
                                     <i class="fas fa-envelope mr-1 text-primary"></i>Email *
                                 </label>
                                 <input type="email" name="email" required
+                                       placeholder="example@email.com"
                                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
                             </div>
                             <div>
@@ -183,51 +147,45 @@
                                     <i class="fas fa-phone mr-1 text-primary"></i>Phone *
                                 </label>
                                 <input type="tel" name="phone" required
+                                       placeholder="+1 (555) 123-4567"
                                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
                             </div>
                         </div>
 
-                        <!-- Password and Position -->
+                        <!-- Position and Hire Date -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    <i class="fas fa-lock mr-1 text-primary"></i>Password *
-                                </label>
-                                <input type="password" name="password" required
-                                       class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
-                            </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">
                                     <i class="fas fa-briefcase mr-1 text-primary"></i>Position *
                                 </label>
                                 <input type="text" name="position" required
+                                       placeholder="e.g., Manager, Mechanic, Sales"
                                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
                             </div>
-                        </div>
-
-                        <!-- Hire Date and Manager ID -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    <i class="fas fa-calendar mr-1 text-primary"></i>Hire Date *
+                                    <i class="fas fa-calendar-alt mr-1 text-primary"></i>Hire Date *
                                 </label>
                                 <input type="date" name="hireDate" required
                                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    <i class="fas fa-user-tie mr-1 text-primary"></i>Manager ID (Optional)
-                                </label>
-                                <input type="number" name="managerId" min="1"
-                                       placeholder="Enter manager ID"
-                                       class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
-                            </div>
+                        </div>
+
+                        <!-- Manager ID (Optional) -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-user-tie mr-1 text-primary"></i>Manager ID (Optional)
+                            </label>
+                            <input type="number" name="managerId" min="1"
+                                   placeholder="Enter manager ID if applicable"
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
                         </div>
 
                         <button type="submit" class="w-full bg-primary text-white px-6 py-2 rounded-md font-medium hover:bg-secondary transition">
-                            <i class="fas fa-user-plus mr-2"></i>Register Staff
+                            <i class="fas fa-check mr-2"></i>Register Staff
                         </button>
                     </form>
+
                 </div>
             </div>
 
@@ -276,17 +234,9 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <button class="text-primary hover:text-secondary mr-2" title="Edit">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="text-red-500 hover:text-red-700" title="Delete" th:onclick="'deleteStaff(' + ${staff.staffId} + ')'">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                                <button th:if="${staff.isActive}" class="text-yellow-500 hover:text-yellow-700 ml-2" title="Deactivate" th:onclick="'toggleStatus(' + ${staff.staffId} + ', false)'">
-                                    <i class="fas fa-ban"></i>
-                                </button>
-                                <button th:unless="${staff.isActive}" class="text-green-500 hover:text-green-700 ml-2" title="Activate" th:onclick="'toggleStatus(' + ${staff.staffId} + ', true)'">
-                                    <i class="fas fa-check-circle"></i>
+                                <button class="text-primary hover:text-secondary mr-2" title="Edit"
+                                        th:onclick="'window.location.href=\'/staff/' + ${staff.staffId} + '/edit\''">
+                                    <i class="fas fa-edit"></i> Edit
                                 </button>
                             </td>
                         </tr>
@@ -338,21 +288,6 @@
             row.style.display = text.includes(searchTerm) ? '' : 'none';
         });
     });
-
-    // Delete staff function
-    function deleteStaff(staffId) {
-        if (confirm('Are you sure you want to delete this staff member?')) {
-            window.location.href = `/api/staff/${staffId}/delete`;
-        }
-    }
-
-    // Toggle staff status
-    function toggleStatus(staffId, activate) {
-        const action = activate ? 'activate' : 'deactivate';
-        if (confirm(`Are you sure you want to ${action} this staff member?`)) {
-            window.location.href = `/api/staff/${staffId}/toggle-status?active=${activate}`;
-        }
-    }
 </script>
 </body>
 </html>

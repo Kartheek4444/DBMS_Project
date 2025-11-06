@@ -1,5 +1,6 @@
 package com.dbmsproject.car_rental.repository;
 
+import com.dbmsproject.car_rental.model.AgreementStatus;
 import com.dbmsproject.car_rental.model.RentalAgreement;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -16,6 +17,7 @@ public interface RentalAgreementRepository extends JpaRepository<RentalAgreement
     List<RentalAgreement> findByPickupTimeBetween(LocalDateTime startDate, LocalDateTime endDate);
     List<RentalAgreement> findByReturnTimeIsNull();
     List<RentalAgreement> findByReturnTimeIsNotNull();
+    List<RentalAgreement> findByStatus(AgreementStatus status);
 
     @Query("SELECT ra FROM RentalAgreement ra WHERE " +
             "(:bookingId IS NULL OR ra.booking.bookingId = :bookingId) AND " +

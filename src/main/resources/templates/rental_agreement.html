@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>VijayRentals - Rental Agreements</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+            rel="stylesheet"
+    />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3b82f6",
+                        secondary: "#1e40af",
+                        accent: "#f59e0b",
+                    },
+                    fontFamily: {
+                        poppins: ["Poppins", "sans-serif"],
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        main {
+            flex: 1;
+        }
+        .status-pending {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        .status-active {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        .status-completed {
+            background-color: #e0e7ff;
+            color: #3730a3;
+        }
+    </style>
+</head>
+<body class="font-poppins bg-gray-50">
+
+<!-- Navigation -->
+<nav class="bg-white shadow-md sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+        <div class="flex items-center">
+            <i class="fas fa-car text-primary text-2xl mr-2"></i>
+            <a th:href="@{/index}" class="text-2xl font-bold text-gray-800">
+                Vijay<span class="text-primary">Rentals</span>
+            </a>
+        </div>
+        <div class="hidden md:flex space-x-8">
+            <a th:href="@{/dashboard}" class="text-gray-600 hover:text-primary transition">Dashboard</a>
+            <a th:href="@{/index}" class="text-gray-600 hover:text-primary transition">Home</a>
+            <a th:href="@{/vehicles}" class="text-gray-600 hover:text-primary transition">Vehicles</a>
+            <a th:href="@{/bookings}" class="text-gray-600 hover:text-primary transition">Bookings</a>
+            <a th:href="@{/rental-agreements}" class="text-primary font-medium">Agreements</a>
+        </div>
+
+        <div class="flex items-center space-x-4">
+            <button class="relative text-gray-700">
+                <i class="fas fa-bell text-xl"></i>
+                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+            </button>
+            <a th:href="@{/index}" class="relative text-gray-700 flex items-center">
+                <i class="fas fa-user-circle text-2xl"></i>
+                <span class="ml-2 hidden sm:inline">Login</span>
+            </a>
+            <button id="mobile-menu-button" class="md:hidden text-gray-600 focus:outline-none">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200">
+        <a th:href="@{/dashboard}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Dashboard</a>
+        <a th:href="@{/index}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Home</a>
+        <a th:href="@{/vehicles}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Vehicles</a>
+        <a th:href="@{/bookings}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Bookings</a>
+        <a th:href="@{/rental-agreements}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Agreements</a>
+    </div>
+</nav>
+
+<script>
+    const btn = document.getElementById('mobile-menu-button');
+    const menu = document.getElementById('mobile-menu');
+    btn.addEventListener('click', () => {
+        menu.classList.toggle('hidden');
+    });
+</script>
+
+<!-- Rental Agreements Section -->
+<main>
+    <section class="py-10">
+        <div class="container mx-auto px-4">
+
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h1 class="text-3xl font-bold">Rental Agreements</h1>
+                    <p class="text-gray-600 mt-2">Manage vehicle pickup and return agreements</p>
+                </div>
+                <a th:href="@{/rental-agreements/new}"
+                   class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-secondary transition flex items-center">
+                    <i class="fas fa-plus mr-2"></i> Add Agreement
+                </a>
+            </div>
+
+            <!-- Filter Section -->
+            <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+                <form th:action="@{/rental-agreements/filter}" method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                        <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                            <option value="">All Status</option>
+                            <option value="PENDING">Pending</option>
+                            <option value="COMPLETED">Completed</option>
+                        </select>
+                    </div>
+                    <div class="flex items-end">
+                        <button type="submit" class="w-full bg-primary text-white px-4 py-2 rounded-md hover:bg-secondary transition">
+                            <i class="fas fa-filter mr-2"></i>Filter
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+
+
+
+            <!-- Agreements Table -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h2 class="text-xl font-bold">Agreement Records</h2>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Agreement ID</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Booking ID</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pickup Time</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Return Time</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Handled By</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                        <tr th:if="${agreements == null or agreements.isEmpty()}">
+                            <td colspan="8" class="px-6 py-8 text-center text-gray-500">
+                                <i class="fas fa-file-contract text-4xl mb-2 block"></i>
+                                <p class="text-lg font-medium">No rental agreements found</p>
+                                <p class="text-sm">There are no rental agreements in the system yet.</p>
+                            </td>
+                        </tr>
+                        <tr th:each="agreement : ${agreements}" class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap font-medium" th:text="${agreement.agreementId}">RA001</td>
+                            <td class="px-6 py-4 whitespace-nowrap" th:text="${agreement.bookingId}">BK001</td>
+                            <td class="px-6 py-4 whitespace-nowrap"
+                                th:text="${agreement.pickupTime != null ? #temporals.format(agreement.pickupTime, 'MMM dd, yyyy HH:mm') : 'N/A'}">
+                                Sep 15, 2023 10:00
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap"
+                                th:text="${agreement.returnTime != null ? #temporals.format(agreement.returnTime, 'MMM dd, yyyy HH:mm') : 'Pending'}">
+                                Sep 20, 2023 10:00
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 py-1 text-xs rounded-full"
+                                      th:classappend="${agreement.status?.name() == 'PENDING'} ? 'status-pending' :
+                                                     (${agreement.status?.name() == 'COMPLETED'} ? 'status-completed' : 'status-active')"
+                                      th:text="${agreement.status}">PENDING</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap font-semibold"
+                                th:text="${agreement.amount != null ? '$' + agreement.amount : 'N/A'}">$500.00</td>
+                            <td class="px-6 py-4 whitespace-nowrap" th:text="${agreement.handledByStaffName ?: 'N/A'}">John Doe</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <a th:href="@{/rental-agreements/{id}/edit(id=${agreement.agreementId})}"
+                                   class="text-primary hover:text-secondary mr-3">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- Footer -->
+<footer class="bg-gray-800 text-gray-300 py-6">
+    <div class="container mx-auto px-4 text-center">
+        <div class="flex items-center justify-center mb-2">
+            <i class="fas fa-car text-primary text-2xl mr-2"></i>
+            <span class="text-2xl font-bold">
+                Vijay<span class="text-primary">Rentals</span>
+            </span>
+        </div>
+        <p class="text-sm text-gray-400">
+            &copy; 2023 VijayRentals. All rights reserved.
+        </p>
+    </div>
+</footer>
+
+</body>
+</html>

@@ -203,6 +203,7 @@
                                     <option value="">Select Vehicle</option>
                                     <option th:each="vehicle : ${vehicles}"
                                             th:value="${vehicle.vehicleId}"
+                                            th:attr="data-price=${vehicle.pricePerDay}"
                                             th:text="${vehicle.make + ' ' + vehicle.model + ' (' + vehicle.licensePlate + ')'}">
                                         Vehicle Info
                                     </option>
@@ -247,12 +248,16 @@
                         <!-- Deposit Amount -->
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700 mb-2">
-                                <i class="fas fa-dollar-sign mr-1 text-primary"></i>Deposit Amount *
+                                <i class="fas fa-dollar-sign mr-1 text-primary"></i>Deposit Amount
                             </label>
-                            <input type="number" name="depositAmount" step="0.01" required
-                                   class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                                   placeholder="Enter deposit amount" />
+                            <input type="number" name="depositAmount" step="0.01" required readonly
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary"
+                                   placeholder="Calculated automatically" id="depositAmount" />
+                            <p class="text-sm text-gray-500 mt-1">
+                                <i class="fas fa-info-circle mr-1"></i>Deposit = 100 + Price per day × Number of days
+                            </p>
                         </div>
+
 
                         <!-- Hidden Status -->
                         <input type="hidden" name="status" value="PENDING" />
@@ -355,18 +360,9 @@
                           th:text="${booking.status}">Status</span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <a th:href="@{/bookings/{id}(id=${booking.bookingId})}" class="text-blue-500 hover:text-blue-700 mr-2" title="View">
-                                    <i class="fas fa-eye"></i>
-                                </a>
                                 <a th:href="@{/bookings/{id}/edit(id=${booking.bookingId})}" class="text-primary hover:text-secondary mr-2" title="Edit">
-                                    <i class="fas fa-edit"></i>
+                                    <i class="fas fa-edit"></i> Edit
                                 </a>
-                                <form th:action="@{/bookings/{id}/delete(id=${booking.bookingId})}" method="post" style="display: inline;">
-                                    <button type="submit" class="text-red-500 hover:text-red-700" title="Delete"
-                                            onclick="return confirm('Are you sure you want to delete this booking?')">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
                             </td>
                         </tr>
                         </tbody>
@@ -402,6 +398,38 @@
     mobileMenuButton?.addEventListener('click', () => {
         mobileMenu.classList.toggle('hidden');
     });
+    // ... existing mobile menu code ...
+
+    // Deposit calculation for dashboard booking form
+    const vehicleSelect = document.querySelector('select[name="vehicleId"]');
+    const pickupInput = document.querySelector('input[name="pickupDate"]');
+    const returnInput = document.querySelector('input[name="returnDate"]');
+    const depositInput = document.getElementById('depositAmount');
+
+    function calculateDashboardDeposit() {
+        const selectedVehicleId = vehicleSelect?.value;
+        const pickupDate = new Date(pickupInput?.value);
+        const returnDate = new Date(returnInput?.value);
+
+        if (!selectedVehicleId || !pickupInput?.value || !returnInput?.value || returnDate <= pickupDate) {
+            depositInput.value = '';
+            return;
+        }
+
+        // Find the selected vehicle's price from the vehicles list
+        const vehicleOption = vehicleSelect.options[vehicleSelect.selectedIndex];
+        const pricePerDay = parseFloat(vehicleOption.getAttribute('data-price')) || 0;
+
+        const timeDiff = returnDate - pickupDate;
+        const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+        const depositAmount = 100 + pricePerDay * daysDiff;
+
+        depositInput.value = depositAmount.toFixed(2);
+    }
+
+    vehicleSelect?.addEventListener('change', calculateDashboardDeposit);
+    pickupInput?.addEventListener('change', calculateDashboardDeposit);
+    returnInput?.addEventListener('change', calculateDashboardDeposit);
 </script>
 </body>
 </html>
