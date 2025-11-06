@@ -7,12 +7,13 @@ import com.dbmsproject.car_rental.mapper.StaffMapper;
 import com.dbmsproject.car_rental.model.Staff;
 import com.dbmsproject.car_rental.model.StaffMiddleName;
 import com.dbmsproject.car_rental.model.StaffMiddleNameId;
+import com.dbmsproject.car_rental.repository.CustomerRepository;
 import com.dbmsproject.car_rental.repository.StaffRepository;
 import com.dbmsproject.car_rental.service.StaffService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,11 +25,21 @@ import java.util.stream.Collectors;
 public class StaffServiceImpl implements StaffService {
 
     private final StaffRepository staffRepository;
+    private final CustomerRepository customerRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
     public StaffDto createStaff(StaffDto staffDto) {
+
+        if (staffRepository.findByEmail(staffDto.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("This email is already registered as staff.");
+        }
+
+        // Check if email already exists in customer table
+        if (customerRepository.findByEmail(staffDto.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("This email is already registered as a customer.");
+        }
         Staff staff = StaffMapper.toStaff(staffDto);
         staff.setPassword(passwordEncoder.encode(staffDto.getPassword()));
 
@@ -122,7 +133,7 @@ public class StaffServiceImpl implements StaffService {
     @Transactional(readOnly = true)
     public boolean validateStaff(String email, String password) {
         // Implement staff validation logic
-        StaffDto staff = staffRepository.getStaffByEmail(email);
+        Staff staff = staffRepository.getStaffByEmail(email);
         if (staff != null && staff.getIsActive()) {
             // Verify password (use password encoder if passwords are hashed)
             return passwordEncoder.matches(password, staff.getPassword());
@@ -148,5 +159,12 @@ public class StaffServiceImpl implements StaffService {
         return staffList.stream()
                 .map(StaffMapper::toStaffDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public StaffDto getStaffByEmail(String email) {
+        Staff staff = staffRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Staff not found with email: " + email));
+        return StaffMapper.toStaffDto(staff);
     }
 }

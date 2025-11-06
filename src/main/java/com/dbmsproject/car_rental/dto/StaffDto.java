@@ -23,5 +23,6 @@ public class StaffDto {
     private String position;
     private LocalDate hireDate;
     private Long managerId;
+    private String role;
     private List<String> middleNames;
 }

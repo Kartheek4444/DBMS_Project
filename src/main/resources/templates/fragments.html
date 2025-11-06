@@ -123,7 +123,6 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="hidden md:flex space-x-8">
             <a th:href="@{/}" class="text-gray-600 hover:text-primary transition">Home</a>
 
-            <a sec:authorize="!isAuthenticated()" th:href="@{/login}" class="text-gray-600 hover:text-primary transition">Login</a>
             <a sec:authorize="!isAuthenticated()" th:href="@{/vehicles}" class="text-gray-600 hover:text-primary transition">Vehicles</a>
             <a sec:authorize="isAuthenticated()" th:href="@{/vehicles}" class="text-gray-600 hover:text-primary transition">Vehicles</a>
 
@@ -135,9 +134,9 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
 
         <div class="flex items-center space-x-4">
-            <a sec:authorize="!isAuthenticated()" th:href="@{/staff_login}" class="text-primary font-medium flex items-center">
+            <a sec:authorize="!isAuthenticated()" th:href="@{/login}" class="text-primary font-medium flex items-center">
                 <i class="fas fa-user-tie text-2xl"></i>
-                <span class="ml-2 hidden sm:inline">Staff Login</span>
+                <span class="ml-2 hidden sm:inline">Login</span>
             </a>
 
             <div sec:authorize="isAuthenticated()" class="relative">
@@ -181,9 +180,8 @@ document.addEventListener('DOMContentLoaded', () => {
         <a th:href="@{/}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Home</a>
 
         <div sec:authorize="!isAuthenticated()">
-            <a th:href="@{/login}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Login</a>
             <a th:href="@{/vehicles}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Vehicles</a>
-            <a th:href="@{/staff_login}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Staff Login</a>
+            <a th:href="@{/login}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Login</a>
         </div>
 
         <div sec:authorize="isAuthenticated()">

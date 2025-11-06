@@ -11,4 +11,5 @@ public interface StaffService {
     boolean validateStaff(String email, String password);
     void deleteStaff(Long staffId);
     List<StaffDto> getAllStaff();
+    StaffDto getStaffByEmail(String email);
 }

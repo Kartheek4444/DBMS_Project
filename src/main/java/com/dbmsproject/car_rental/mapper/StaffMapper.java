@@ -1,6 +1,7 @@
 package com.dbmsproject.car_rental.mapper;
 
 import com.dbmsproject.car_rental.dto.StaffDto;
+import com.dbmsproject.car_rental.model.Roles;
 import com.dbmsproject.car_rental.model.Staff;
 import com.dbmsproject.car_rental.model.StaffMiddleName;
 import com.dbmsproject.car_rental.model.StaffMiddleNameId;
@@ -26,6 +27,7 @@ public class StaffMapper {
                 .password(staff.getPassword())
                 .position(staff.getPosition())
                 .hireDate(staff.getHireDate())
+                .role(staff.getRole().name())
                 .managerId(staff.getManager() != null ? staff.getManager().getStaffId() : null)
                 .middleNames(middleNames.isEmpty() ? null : middleNames)
                 .build();
@@ -41,6 +43,7 @@ public class StaffMapper {
                 .password(staffDto.getPassword())
                 .position(staffDto.getPosition())
                 .hireDate(staffDto.getHireDate())
+                .role(staffDto.getRole() != null ? Roles.valueOf(staffDto.getRole()) : Roles.STAFF)
                 .build();
 
         if (staff.getMaintenances() == null) staff.setMaintenances(new ArrayList<>());

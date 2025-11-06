@@ -1,20 +1,15 @@
 package com.dbmsproject.car_rental.controller;
 
-import com.dbmsproject.car_rental.dto.BookingDto;
-import com.dbmsproject.car_rental.dto.CustomerDto;
-import com.dbmsproject.car_rental.dto.CustomerSignupDto;
-import com.dbmsproject.car_rental.dto.StaffDto;
-import com.dbmsproject.car_rental.model.Booking;
+import com.dbmsproject.car_rental.dto.*;
 import com.dbmsproject.car_rental.model.BookingStatus;
 import com.dbmsproject.car_rental.service.BookingService;
 import com.dbmsproject.car_rental.service.CustomerService;
 import com.dbmsproject.car_rental.service.StaffService;
 import com.dbmsproject.car_rental.service.VehicleService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,8 +17,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.security.core.Authentication;
-
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -55,30 +48,6 @@ public class PageController {
         return "login"; // login.html
     }
 
-    @PostMapping("/login")
-    public String handleLogin(
-            @RequestParam("username") String email,
-            @RequestParam("password") String password,
-            HttpServletRequest request,
-            Model model
-    ) {
-        try {
-            boolean isValid = customerService.validateCustomer(email, password);
-            if (isValid) {
-                // Create session for logged-in user
-                HttpSession session = request.getSession();
-                session.setAttribute("userEmail", email);
-                return "redirect:/index";
-            } else {
-                model.addAttribute("loginError", "Invalid email or password");
-                return "login";
-            }
-        } catch (Exception e) {
-            model.addAttribute("loginError", "An error occurred: " + e.getMessage());
-            return "login";
-        }
-    }
-
     @GetMapping("/signup")
     public String signupPage(Model model) {
         model.addAttribute("customerSignupDto", new CustomerSignupDto());
@@ -94,12 +63,19 @@ public class PageController {
 
         try {
             customerService.createCustomer(dto);
-            return "redirect:/login";
-        } catch (Exception e) {
+            model.addAttribute("successMessage", "Account created successfully! Please login.");
+            return "redirect:/login?registered=true";
+        } catch (IllegalArgumentException e) {
             model.addAttribute("signupError", e.getMessage());
+            model.addAttribute("customerSignupDto", dto);
+            return "signup";
+        } catch (Exception e) {
+            model.addAttribute("signupError", "An error occurred during registration. Please try again.");
+            model.addAttribute("customerSignupDto", dto);
             return "signup";
         }
     }
+
 
     @GetMapping("/staff/dashboard")
     public String dashboardPage(
@@ -169,35 +145,6 @@ public class PageController {
         model.addAttribute("inactiveCount", inactiveCount);
 
         return "admin_dashboard";
-    }
-
-    @GetMapping("/staff_login")
-    public String staffLoginPage() {
-        return "staff_login";
-    }
-
-    @PostMapping("/staff_login")
-    public String handleStaffLogin(
-            @RequestParam("username") String email,
-            @RequestParam("password") String password,
-            HttpServletRequest request,
-            Model model
-    ) {
-        try {
-            boolean isValid = staffService.validateStaff(email, password);
-            if (isValid) {
-                // Create session for logged-in staff
-                HttpSession session = request.getSession();
-                session.setAttribute("staffEmail", email);
-                return "redirect:/staff/dashboard";
-            } else {
-                model.addAttribute("loginError", "Invalid email or password");
-                return "staff_login";
-            }
-        } catch (Exception e) {
-            model.addAttribute("loginError", "An error occurred: " + e.getMessage());
-            return "staff_login";
-        }
     }
 
 }

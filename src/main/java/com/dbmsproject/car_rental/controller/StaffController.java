@@ -7,11 +7,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.ui.Model;
 
 import java.time.LocalDate;
 import java.util.List;
-import org.springframework.ui.Model;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @AllArgsConstructor
@@ -67,6 +67,7 @@ public class StaffController {
                     .lastName(lastName)
                     .email(email)
                     .phone(phone)
+                    .password(password)
                     .position(position)
                     .hireDate(hireDate)
                     .managerId(managerId)
@@ -90,9 +91,11 @@ public class StaffController {
             @RequestParam String lastName,
             @RequestParam String email,
             @RequestParam String phone,
+            @RequestParam String password,
             @RequestParam String position,
             @RequestParam LocalDate hireDate,
             @RequestParam(required = false) Long managerId,
+            @RequestParam String role,
             RedirectAttributes redirectAttributes) {
 
         try {
@@ -101,18 +104,23 @@ public class StaffController {
                     .lastName(lastName)
                     .email(email)
                     .phone(phone)
+                    .password(password)
                     .position(position)
                     .hireDate(hireDate)
                     .managerId(managerId)
+                    .role(role)
                     .isActive(true)
                     .build();
 
             staffService.createStaff(staffDto);
             redirectAttributes.addFlashAttribute("successMessage", "Staff registered successfully!");
-            return "redirect:/dashboard";
+            return "redirect:/staff/dashboard";
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/admin/dashboard";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Registration failed: " + e.getMessage());
-            return "redirect:/dashboard";
+            return "redirect:/admin/dashboard";
         }
     }
 }

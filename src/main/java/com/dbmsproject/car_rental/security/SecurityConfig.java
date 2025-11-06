@@ -47,10 +47,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/index","/vehicles", "/login", "/signup", "/staff_login", "/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("/", "/index","/vehicles", "/login", "/signup", "/staff_login","/admin/dashboard", "/css/**", "/js/**", "/images/**").permitAll()
                         .requestMatchers("/bookings").hasAuthority("USER")
-                        .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
-                        .requestMatchers("/staff/**").hasAnyAuthority("STAFF", "ADMIN")
+                        .requestMatchers("/admin/**").hasAnyAuthority("USER","STAFF","ADMIN")
+                        .requestMatchers("/staff/**").hasAnyAuthority("USER","STAFF","ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -61,7 +61,7 @@ public class SecurityConfig {
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout")
+                        .logoutSuccessUrl("/")
                         .permitAll()
                 );
 

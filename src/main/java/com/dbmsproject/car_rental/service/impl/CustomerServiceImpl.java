@@ -6,11 +6,12 @@ import com.dbmsproject.car_rental.exception.ResourceNotFoundException;
 import com.dbmsproject.car_rental.mapper.CustomerMapper;
 import com.dbmsproject.car_rental.model.Customer;
 import com.dbmsproject.car_rental.repository.CustomerRepository;
+import com.dbmsproject.car_rental.repository.StaffRepository;
 import com.dbmsproject.car_rental.service.CustomerService;
-import org.springframework.transaction.annotation.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,10 +21,20 @@ import java.util.stream.Collectors;
 public class CustomerServiceImpl implements CustomerService {
 
     private CustomerRepository customerRepository;
+    private StaffRepository staffRepository;
     private PasswordEncoder passwordEncoder;
 
     @Override
     public CustomerDto createCustomer(CustomerSignupDto customerSignupDto) {
+        // Check if email already exists in customer table
+        if (customerRepository.findByEmail(customerSignupDto.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("This email is already registered. Please use a different email or login.");
+        }
+
+        // Check if email already exists in staff table
+        if (staffRepository.findByEmail(customerSignupDto.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("This email is already registered. Please use a different email or login.");
+        }
 
         Customer customer = Customer.builder()
                 .firstName(customerSignupDto.getFirstName())
@@ -35,6 +46,7 @@ public class CustomerServiceImpl implements CustomerService {
         Customer savedCustomer = customerRepository.save(customer);
         return CustomerMapper.toCustomerDto(savedCustomer);
     }
+
 
     @Override
     public CustomerDto getCustomerById(Long customerId) {
