@@ -29,25 +29,42 @@
         <div class="container mx-auto px-4">
             <div class="bg-white rounded-lg shadow-md overflow-hidden">
                 <!-- Filter Section -->
+                <!-- Filter Section -->
                 <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
                     <form th:action="@{/maintenance}" method="get" class="flex flex-col lg:flex-row lg:items-end gap-4">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1">
                             <!-- Vehicle Filter -->
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    <i class="fas fa-car mr-1 text-primary"></i>Vehicle ID
+                                    <i class="fas fa-car mr-1 text-primary"></i>Filter by Vehicle
                                 </label>
-                                <input type="number" name="vehicleId" th:value="${vehicleId}" placeholder="Filter by Vehicle ID"
-                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                                <select name="vehicleId"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                                    <option value="">All Vehicles</option>
+                                    <option th:each="vehicle : ${vehicles}"
+                                            th:value="${vehicle.vehicleId}"
+                                            th:selected="${selectedVehicleId != null && selectedVehicleId == vehicle.vehicleId}"
+                                            th:text="${vehicle.make + ' ' + vehicle.model + ' (' + vehicle.licensePlate + ')'}">
+                                        Vehicle Info
+                                    </option>
+                                </select>
                             </div>
 
                             <!-- Staff Filter -->
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    <i class="fas fa-user mr-1 text-primary"></i>Staff ID
+                                    <i class="fas fa-user mr-1 text-primary"></i>Filter by Staff
                                 </label>
-                                <input type="number" name="staffId" th:value="${staffId}" placeholder="Filter by Staff ID"
-                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                                <select name="staffId"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                                    <option value="">All Staff</option>
+                                    <option th:each="staff : ${staffList}"
+                                            th:value="${staff.staffId}"
+                                            th:selected="${selectedStaffId != null && selectedStaffId == staff.staffId}"
+                                            th:text="${staff.firstName + ' ' + staff.lastName + ' (ID: ' + staff.staffId + ')'}">
+                                        Staff Info
+                                    </option>
+                                </select>
                             </div>
                         </div>
 
@@ -68,8 +85,8 @@
                         <thead class="bg-gray-50">
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Vehicle ID</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Staff ID</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Vehicle</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Staff</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Service Date</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Service Type</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cost</th>
@@ -80,18 +97,15 @@
                         <tbody class="bg-white divide-y divide-gray-200">
                         <tr th:each="maintenance : ${maintenanceList}" class="hover:bg-gray-100">
                             <td class="px-6 py-4" th:text="${maintenance.maintenanceId}"></td>
-                            <td class="px-6 py-4" th:text="${maintenance.vehicleId}"></td>
-                            <td class="px-6 py-4" th:text="${maintenance.staffId ?: 'N/A'}"></td>
+                            <td class="px-6 py-4" th:text="${maintenance.vehicleName}"></td>
+                            <td class="px-6 py-4" th:text="${maintenance.staffName ?: 'N/A'}"></td>
                             <td class="px-6 py-4" th:text="${#temporals.format(maintenance.serviceDate, 'yyyy-MM-dd HH:mm')}"></td>
                             <td class="px-6 py-4" th:text="${maintenance.serviceType}"></td>
                             <td class="px-6 py-4" th:text="'$' + ${maintenance.cost}"></td>
                             <td class="px-6 py-4" th:text="${maintenance.nextServiceDate != null ? #temporals.format(maintenance.nextServiceDate, 'yyyy-MM-dd') : 'N/A'}"></td>
                             <td class="px-6 py-4">
-                                <a th:href="@{/maintenance/{id}(id=${maintenance.maintenanceId})}" class="text-primary hover:text-secondary mr-3">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a th:href="@{/maintenance/edit/{id}(id=${maintenance.maintenanceId})}" class="text-accent hover:text-yellow-600">
-                                    <i class="fas fa-edit"></i>
+                                <a th:href="@{/maintenance/edit/{id}(id=${maintenance.maintenanceId})}" class="text-primary hover:text-secondary mr-2">
+                                    <i class="fas fa-edit"></i> Edit
                                 </a>
                             </td>
                         </tr>

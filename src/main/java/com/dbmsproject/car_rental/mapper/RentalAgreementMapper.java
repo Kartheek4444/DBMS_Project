@@ -23,6 +23,8 @@ public class RentalAgreementMapper {
                 .returnCondition(rentalAgreement.getReturnCondition())
                 .handledByStaffId(rentalAgreement.getHandledBy() != null ? rentalAgreement.getHandledBy().getStaffId() : null)
                 .handledByStaffName(rentalAgreement.getHandledBy() != null ? rentalAgreement.getHandledBy().getName() : null)
+                .status(rentalAgreement.getStatus())
+                .amount(rentalAgreement.getAmount())
                 .build();
     }
 
@@ -39,6 +41,8 @@ public class RentalAgreementMapper {
                 .returnTime(dto.getReturnTime())
                 .pickupCondition(dto.getPickupCondition())
                 .returnCondition(dto.getReturnCondition())
+                .status(dto.getStatus())
+                .amount(dto.getAmount())
                 .build();
     }
 }

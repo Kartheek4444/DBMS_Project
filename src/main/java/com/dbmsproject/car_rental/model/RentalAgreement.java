@@ -1,9 +1,9 @@
-// RentalAgreement.java
 package com.dbmsproject.car_rental.model;
 
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
@@ -45,4 +45,11 @@ public class RentalAgreement {
     @ManyToOne
     @JoinColumn(name = "handled_by")
     private Staff handledBy;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", length = 50)
+    private AgreementStatus status;
+
+    @Column(name = "amount", precision = 10, scale = 2)
+    private BigDecimal amount;
 }

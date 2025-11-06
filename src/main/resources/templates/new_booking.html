@@ -68,9 +68,12 @@
                         <label class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-dollar-sign mr-1 text-primary"></i>Deposit Amount
                         </label>
-                        <input type="number" th:field="*{depositAmount}" step="0.01" required
-                               class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                               placeholder="Enter deposit amount" />
+                        <input type="number" th:field="*{depositAmount}" step="0.01" required readonly
+                               class="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary"
+                               placeholder="Calculated automatically" />
+                        <p class="text-sm text-gray-500 mt-1">
+                            <i class="fas fa-info-circle mr-1"></i>Deposit = 100 + Price per day × Number of days
+                        </p>
                     </div>
 
                     <!-- Action Buttons -->
@@ -91,6 +94,33 @@
 </main>
 
 <!-- Footer (copy from vehicle_detail.html) -->
+
+
 <footer th:replace="fragments :: footer"></footer>
+
+<script>
+    const pricePerDay = parseFloat([[${pricePerDay}]]);
+    const pickupDateInput = document.querySelector('input[name="pickupDate"]');
+    const returnDateInput = document.querySelector('input[name="returnDate"]');
+    const depositAmountInput = document.querySelector('input[name="depositAmount"]');
+
+    function calculateDeposit() {
+        const pickupDate = new Date(pickupDateInput.value);
+        const returnDate = new Date(returnDateInput.value);
+
+        if (pickupDateInput.value && returnDateInput.value && returnDate > pickupDate) {
+            const timeDiff = returnDate - pickupDate;
+            const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+            const depositAmount = 100 + pricePerDay * daysDiff;
+            depositAmountInput.value = depositAmount.toFixed(2);
+        } else {
+            depositAmountInput.value = '';
+        }
+    }
+
+    pickupDateInput.addEventListener('change', calculateDeposit);
+    returnDateInput.addEventListener('change', calculateDeposit);
+</script>
+
 </body>
 </html>

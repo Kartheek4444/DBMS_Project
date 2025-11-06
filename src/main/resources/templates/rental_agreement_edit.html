@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Edit Rental Agreement - VijayRentals</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3b82f6",
+                        secondary: "#1e40af",
+                        accent: "#f59e0b",
+                    },
+                    fontFamily: {
+                        poppins: ["Poppins", "sans-serif"],
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        main {
+            flex: 1;
+        }
+    </style>
+</head>
+<body class="font-poppins bg-gray-50">
+
+<!-- Navigation -->
+<nav class="bg-white shadow-md sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+        <div class="flex items-center">
+            <i class="fas fa-car text-primary text-2xl mr-2"></i>
+            <a th:href="@{/index}" class="text-2xl font-bold text-gray-800">
+                Vijay<span class="text-primary">Rentals</span>
+            </a>
+        </div>
+        <div class="hidden md:flex space-x-8">
+            <a th:href="@{/dashboard}" class="text-gray-600 hover:text-primary transition">Dashboard</a>
+            <a th:href="@{/index}" class="text-gray-600 hover:text-primary transition">Home</a>
+            <a th:href="@{/vehicles}" class="text-gray-600 hover:text-primary transition">Vehicles</a>
+            <a th:href="@{/bookings}" class="text-gray-600 hover:text-primary transition">Bookings</a>
+            <a th:href="@{/rental-agreements}" class="text-primary font-medium">Agreements</a>
+        </div>
+
+        <div class="flex items-center space-x-4">
+            <button class="relative text-gray-700">
+                <i class="fas fa-bell text-xl"></i>
+                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+            </button>
+            <a th:href="@{/index}" class="relative text-gray-700 flex items-center">
+                <i class="fas fa-user-circle text-2xl"></i>
+                <span class="ml-2 hidden sm:inline">Login</span>
+            </a>
+            <button id="mobile-menu-button" class="md:hidden text-gray-600 focus:outline-none">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200">
+        <a th:href="@{/dashboard}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Dashboard</a>
+        <a th:href="@{/index}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Home</a>
+        <a th:href="@{/vehicles}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Vehicles</a>
+        <a th:href="@{/bookings}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Bookings</a>
+        <a th:href="@{/rental-agreements}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Agreements</a>
+    </div>
+</nav>
+
+<script>
+    const btn = document.getElementById('mobile-menu-button');
+    const menu = document.getElementById('mobile-menu');
+    btn.addEventListener('click', () => {
+        menu.classList.toggle('hidden');
+    });
+</script>
+
+<!-- Edit Agreement Form Section -->
+<main>
+    <section class="py-12">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <div class="mb-6">
+                <a th:href="@{/rental-agreements}" class="text-primary hover:text-secondary inline-flex items-center mb-4">
+                    <i class="fas fa-arrow-left mr-2"></i> Back to Agreements
+                </a>
+                <h1 class="text-3xl font-bold text-center">Edit Rental Agreement #<span th:text="${agreement.agreementId}"></span></h1>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-8">
+                <form th:action="@{/rental-agreements/{id}/update(id=${agreement.agreementId})}" method="post" th:object="${agreement}">
+
+                    <!-- Booking Information (Read-only) -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-bookmark mr-1 text-primary"></i>Booking ID
+                        </label>
+                        <div class="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50">
+                            <span th:text="'#' + ${agreement.bookingId}" class="text-gray-700">Booking #123</span>
+                        </div>
+                        <input type="hidden" th:field="*{bookingId}"/>
+                    </div>
+
+                    <!-- Pickup Details Section -->
+                    <div class="border-t border-gray-200 pt-6 mt-6">
+                        <h3 class="text-lg font-semibold mb-4 flex items-center">
+                            <i class="fas fa-sign-out-alt mr-2 text-primary"></i>Pickup Details
+                        </h3>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-calendar-alt mr-1 text-primary"></i>Pickup Time <span class="text-red-500">*</span>
+                                </label>
+                                <input type="datetime-local"
+                                       name="pickupTime"
+                                       th:value="${pickupTimeFormatted}"
+                                       required
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"/>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-tachometer-alt mr-1 text-primary"></i>Pickup Mileage <span class="text-red-500">*</span>
+                                </label>
+                                <input type="number" th:field="*{pickupMileage}" required min="0"
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                                       placeholder="Enter current mileage"/>
+                            </div>
+
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-clipboard-check mr-1 text-primary"></i>Pickup Condition <span class="text-red-500">*</span>
+                                </label>
+                                <textarea th:field="*{pickupCondition}" required rows="3"
+                                          class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                                          placeholder="Describe the vehicle condition at pickup"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Return Details Section -->
+                    <div class="border-t border-gray-200 pt-6 mt-6">
+                        <h3 class="text-lg font-semibold mb-4 flex items-center">
+                            <i class="fas fa-sign-in-alt mr-2 text-primary"></i>Return Details
+                        </h3>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-calendar-check mr-1 text-primary"></i>Return Time
+                                </label>
+                                <input type="datetime-local"
+                                       name="returnTime"
+                                       th:value="${returnTimeFormatted}"
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"/>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-tachometer-alt mr-1 text-primary"></i>Return Mileage
+                                </label>
+                                <input type="number" th:field="*{returnMileage}" min="0"
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                                       placeholder="Enter return mileage"/>
+                            </div>
+
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-clipboard-check mr-1 text-primary"></i>Return Condition
+                                </label>
+                                <textarea th:field="*{returnCondition}" rows="3"
+                                          class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                                          placeholder="Describe the vehicle condition at return"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Agreement Details Section -->
+                    <div class="border-t border-gray-200 pt-6 mt-6">
+                        <h3 class="text-lg font-semibold mb-4 flex items-center">
+                            <i class="fas fa-file-contract mr-2 text-primary"></i>Agreement Details
+                        </h3>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-info-circle mr-1 text-primary"></i>Status <span class="text-red-500">*</span>
+                                </label>
+                                <select th:field="*{status}" required
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                                    <option th:each="statusOption : ${T(com.dbmsproject.car_rental.model.AgreementStatus).values()}"
+                                            th:value="${statusOption}"
+                                            th:text="${statusOption}"
+                                            th:selected="${statusOption == agreement.status}">
+                                    </option>
+                                </select>
+                            </div>
+
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-dollar-sign mr-1 text-primary"></i>Amount <span class="text-red-500">*</span>
+                                </label>
+                                <input type="number" th:field="*{amount}" required min="0" step="0.01"
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                                       placeholder="0.00"/>
+                            </div>
+
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-user-tie mr-1 text-primary"></i>Handled By Staff
+                                </label>
+                                <select th:field="*{handledByStaffId}"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                                    <option value="">Select staff member</option>
+                                    <option th:each="staff : ${staffList}"
+                                            th:value="${staff.staffId}"
+                                            th:text="${staff.firstName + ' ' + staff.lastName}"
+                                            th:selected="${staff.staffId == agreement.handledByStaffId}">
+                                    </option>
+                                </select>
+                                <p th:if="${agreement.handledByStaffName}" class="text-sm text-gray-600 mt-1">
+                                    <i class="fas fa-info-circle mr-1"></i>
+                                    Current: <span th:text="${agreement.handledByStaffName}"></span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex gap-4 justify-end mt-8">
+                        <a th:href="@{/rental-agreements}"
+                           class="px-6 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition">
+                            <i class="fas fa-times mr-2"></i>Cancel
+                        </a>
+                        <button type="submit"
+                                class="px-6 py-2 bg-primary text-white rounded-md hover:bg-secondary transition">
+                            <i class="fas fa-save mr-2"></i>Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- Footer -->
+<footer class="bg-gray-800 text-gray-300 py-6">
+    <div class="container mx-auto px-4 text-center">
+        <div class="flex items-center justify-center mb-2">
+            <i class="fas fa-car text-primary text-2xl mr-2"></i>
+            <span class="text-2xl font-bold">
+                Vijay<span class="text-primary">Rentals</span>
+            </span>
+        </div>
+        <p class="text-sm text-gray-400">
+            &copy; 2023 VijayRentals. All rights reserved.
+        </p>
+    </div>
+</footer>
+
+</body>
+</html>

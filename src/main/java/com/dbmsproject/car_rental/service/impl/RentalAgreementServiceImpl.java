@@ -3,6 +3,7 @@ package com.dbmsproject.car_rental.service.impl;
 import com.dbmsproject.car_rental.dto.RentalAgreementDto;
 import com.dbmsproject.car_rental.exception.ResourceNotFoundException;
 import com.dbmsproject.car_rental.mapper.RentalAgreementMapper;
+import com.dbmsproject.car_rental.model.AgreementStatus;
 import com.dbmsproject.car_rental.model.Booking;
 import com.dbmsproject.car_rental.model.RentalAgreement;
 import com.dbmsproject.car_rental.model.Staff;
@@ -50,6 +51,14 @@ public class RentalAgreementServiceImpl implements RentalAgreementService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<RentalAgreementDto> getRentalAgreementsByStatus(AgreementStatus status) {
+        return rentalAgreementRepository.findByStatus(status).stream()
+                .map(rentalAgreementMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public RentalAgreementDto getRentalAgreementById(Long agreementId) {
         RentalAgreement rentalAgreement = rentalAgreementRepository.findById(agreementId)
                 .orElseThrow(() -> new ResourceNotFoundException("Rental Agreement not found with id: " + agreementId));
@@ -67,6 +76,8 @@ public class RentalAgreementServiceImpl implements RentalAgreementService {
         existingAgreement.setReturnTime(rentalAgreementDto.getReturnTime());
         existingAgreement.setPickupCondition(rentalAgreementDto.getPickupCondition());
         existingAgreement.setReturnCondition(rentalAgreementDto.getReturnCondition());
+        existingAgreement.setStatus(rentalAgreementDto.getStatus()); // Add this line
+        existingAgreement.setAmount(rentalAgreementDto.getAmount()); // Add this line
 
         if (rentalAgreementDto.getBookingId() != null && !rentalAgreementDto.getBookingId().equals(
                 existingAgreement.getBooking() != null ? existingAgreement.getBooking().getBookingId() : null)) {
@@ -84,6 +95,7 @@ public class RentalAgreementServiceImpl implements RentalAgreementService {
         RentalAgreement updatedAgreement = rentalAgreementRepository.save(existingAgreement);
         return rentalAgreementMapper.toDto(updatedAgreement);
     }
+
 
     @Override
     public void deleteRentalAgreement(Long agreementId) {

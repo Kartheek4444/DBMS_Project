@@ -37,17 +37,52 @@ public class StaffController {
         return ResponseEntity.ok(staff);
     }
 
-    @PutMapping("/staff/{id}")
-    public ResponseEntity<StaffDto> updateStaff(@PathVariable("id") Long staffId, @RequestBody StaffDto staffDto) {
-        StaffDto updatedStaff = staffService.updateStaff(staffId, staffDto);
-        return ResponseEntity.ok(updatedStaff);
+    @GetMapping("/staff/{id}/edit")
+    public String editStaffPage(@PathVariable("id") Long staffId, Model model) {
+        StaffDto staff = staffService.getStaffById(staffId);
+        model.addAttribute("staff", staff);
+        return "staff_edit";
     }
 
-    @DeleteMapping("/staff/{id}")
-    public ResponseEntity<String> deleteStaff(@PathVariable("id") Long staffId) {
-        staffService.deleteStaff(staffId);
-        return ResponseEntity.ok("Staff deleted successfully");
+    @PostMapping("/staff/{id}/update")
+    public String updateStaff(
+            @PathVariable("id") Long staffId,
+            @RequestParam String firstName,
+            @RequestParam String lastName,
+            @RequestParam String email,
+            @RequestParam String phone,
+            @RequestParam String position,
+            @RequestParam LocalDate hireDate,
+            @RequestParam(required = false) Long managerId,
+            @RequestParam(required = false) String password,
+            @RequestParam Boolean isActive,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+            StaffDto existingStaff = staffService.getStaffById(staffId);
+
+            StaffDto staffDto = StaffDto.builder()
+                    .staffId(staffId)
+                    .firstName(firstName)
+                    .lastName(lastName)
+                    .email(email)
+                    .phone(phone)
+                    .position(position)
+                    .hireDate(hireDate)
+                    .managerId(managerId)
+                    .isActive(isActive)
+                    .password(password != null && !password.isEmpty() ? password : existingStaff.getPassword())
+                    .build();
+
+            staffService.updateStaff(staffId, staffDto);
+            redirectAttributes.addFlashAttribute("successMessage", "Staff updated successfully!");
+            return "redirect:/admin/dashboard";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Update failed: " + e.getMessage());
+            return "redirect:/staff/" + staffId + "/edit";
+        }
     }
+
 
     @PostMapping("/staff/register")
     public String registerStaff(

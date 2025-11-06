@@ -1,7 +1,9 @@
 package com.dbmsproject.car_rental.dto;
 
+import com.dbmsproject.car_rental.model.AgreementStatus;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
@@ -21,4 +23,6 @@ public class RentalAgreementDto {
     private String returnCondition;
     private Long handledByStaffId;
     private String handledByStaffName;
+    private AgreementStatus status;
+    private BigDecimal amount;
 }

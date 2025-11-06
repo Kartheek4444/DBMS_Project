@@ -59,6 +59,26 @@ public class BookingController {
         return ResponseEntity.ok(bookingService.getBookingById(id));
     }
 
+
+    @GetMapping("/bookings/{id}/edit")
+    public String editBookingForm(@PathVariable Long id, Model model) {
+        BookingDto booking = bookingService.getBookingById(id);
+        List<VehicleDto> vehicles = vehicleService.getAllVehicles();
+        List<CustomerDto> customers = customerService.getAllCustomers();
+
+        model.addAttribute("booking", booking);
+        model.addAttribute("vehicles", vehicles);
+        model.addAttribute("customers", customers);
+
+        return "booking_edit";
+    }
+
+    @PostMapping("/bookings/{id}/update")
+    public String updateBooking(@PathVariable Long id, @ModelAttribute BookingDto bookingDto) {
+        bookingService.updateBooking(id, bookingDto);
+        return "redirect:/bookings";
+    }
+
     @GetMapping("/bookings/new")
     public String newBookingForm(
             @RequestParam Long vehicleId,

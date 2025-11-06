@@ -64,6 +64,32 @@ public class VehicleController {
         return "vehicle_detail";
     }
 
+    @GetMapping("/vehicles/{id}/edit")
+    public String showEditVehicleForm(@PathVariable Long id, Model model) {
+        VehicleDto vehicle = vehicleService.getVehicleById(id);
+        model.addAttribute("vehicle", vehicle);
+        return "vehicle_edit";
+    }
+
+    @PostMapping("/vehicles/{id}/edit")
+    public String updateVehicle(@PathVariable Long id,
+                                @ModelAttribute VehicleDto vehicleDto,
+                                @RequestParam(value = "imageFile", required = false) MultipartFile imageFile) {
+        try {
+            if (imageFile != null && !imageFile.isEmpty()) {
+                String imagePath = saveImage(imageFile);
+                vehicleDto.setImageUrl(imagePath);
+            } else {
+                VehicleDto existingVehicle = vehicleService.getVehicleById(id);
+                vehicleDto.setImageUrl(existingVehicle.getImageUrl());
+            }
+            vehicleService.updateVehicle(id, vehicleDto);
+            return "redirect:/vehicles/" + id;
+        } catch (IOException e) {
+            return "redirect:/vehicles/" + id + "/edit?error=upload";
+        }
+    }
+
     @GetMapping("/vehicles")
     public String showVehicles(
             @RequestParam(value = "category", required = false) String category,

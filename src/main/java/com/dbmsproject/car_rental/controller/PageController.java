@@ -4,6 +4,7 @@ import com.dbmsproject.car_rental.dto.BookingDto;
 import com.dbmsproject.car_rental.dto.CustomerDto;
 import com.dbmsproject.car_rental.dto.CustomerSignupDto;
 import com.dbmsproject.car_rental.dto.StaffDto;
+import com.dbmsproject.car_rental.model.Booking;
 import com.dbmsproject.car_rental.model.BookingStatus;
 import com.dbmsproject.car_rental.service.BookingService;
 import com.dbmsproject.car_rental.service.CustomerService;
@@ -14,7 +15,6 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.security.core.Authentication;
+
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -38,8 +40,14 @@ public class PageController {
     private final VehicleService vehicleService;
 
     @GetMapping({"/", "/index"})
-    public String homePage() {
-        return "index"; // home.html
+    public String homePage(Model model) {
+        List<VehicleDto> vehicles = vehicleService.getAllVehicles();
+        // Get first 3 available vehicles for featured section
+        List<VehicleDto> featuredVehicles = vehicles.stream()
+                .limit(3)
+                .toList();
+        model.addAttribute("featuredVehicles", featuredVehicles);
+        return "index";
     }
 
     @GetMapping("/login")
@@ -102,8 +110,11 @@ public class PageController {
 
         List<BookingDto> bookings;
 
-        if (status != null || startDate != null || endDate != null) {
-            BookingStatus bookingStatus = (status != null) ? BookingStatus.valueOf(status) : null;
+        // Check if any filter is actually provided (not just empty strings)
+        boolean hasFilters = (status != null && !status.isEmpty()) || startDate != null || endDate != null;
+
+        if (hasFilters) {
+            BookingStatus bookingStatus = (status != null && !status.isEmpty()) ? BookingStatus.valueOf(status) : null;
             LocalDateTime startDateTime = (startDate != null) ? startDate.atStartOfDay() : null;
             LocalDateTime endDateTime = (endDate != null) ? endDate.atTime(23, 59, 59) : null;
 
@@ -113,13 +124,11 @@ public class PageController {
         }
 
         model.addAttribute("bookings", bookings);
-
-        // Add vehicles and customers for the booking form
         model.addAttribute("vehicles", vehicleService.getAllVehicles());
         model.addAttribute("customers", customerService.getAllCustomers());
 
         // Keep filter selections
-        if (status != null) {
+        if (status != null && !status.isEmpty()) {
             model.addAttribute("selectedStatus", BookingStatus.valueOf(status));
         }
         model.addAttribute("selectedStartDate", startDate);

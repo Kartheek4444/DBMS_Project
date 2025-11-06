@@ -1,6 +1,7 @@
 package com.dbmsproject.car_rental.service;
 
 import com.dbmsproject.car_rental.dto.RentalAgreementDto;
+import com.dbmsproject.car_rental.model.AgreementStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,6 +17,7 @@ public interface RentalAgreementService {
     List<RentalAgreementDto> getRentalAgreementsByDateRange(LocalDateTime startDate, LocalDateTime endDate);
     List<RentalAgreementDto> getActiveRentalAgreements();
     List<RentalAgreementDto> getCompletedRentalAgreements();
+    List<RentalAgreementDto> getRentalAgreementsByStatus(AgreementStatus status);
     RentalAgreementDto recordPickup(Long bookingId, RentalAgreementDto pickupDetails);
     RentalAgreementDto recordReturn(Long agreementId, RentalAgreementDto returnDetails);
     RentalAgreementDto getRentalAgreementByBookingId(Long bookingId);

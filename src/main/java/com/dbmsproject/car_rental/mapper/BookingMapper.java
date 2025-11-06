@@ -6,20 +6,32 @@ import com.dbmsproject.car_rental.model.Booking;
 public class BookingMapper {
 
     public static BookingDto toDto(Booking booking) {
-        return BookingDto.builder()
+        if (booking == null) {
+            return null;
+        }
+
+        BookingDto.BookingDtoBuilder builder = BookingDto.builder()
                 .bookingId(booking.getBookingId())
-                .customerId(booking.getCustomer().getCustomerId())
-                .customerName(booking.getCustomer().getFirstName() + " " + booking.getCustomer().getLastName())
-                .vehicleId(booking.getVehicle().getVehicleId())
-                .vehicleMake(booking.getVehicle().getMake())
-                .vehicleModel(booking.getVehicle().getModel())
+                .customerId(booking.getCustomer() != null ? booking.getCustomer().getCustomerId() : null)
+                .vehicleId(booking.getVehicle() != null ? booking.getVehicle().getVehicleId() : null)
                 .pickupDate(booking.getPickupDate())
                 .returnDate(booking.getReturnDate())
-                .bookingDate(booking.getBookingDate())
                 .status(booking.getStatus())
                 .depositAmount(booking.getDepositAmount())
-                .totalAmount(booking.getTotalAmount())
-                .build();
+                .bookingDate(booking.getBookingDate());
+
+        // Populate customer name
+        if (booking.getCustomer() != null) {
+            builder.customerName(booking.getCustomer().getFirstName() + " " + booking.getCustomer().getLastName());
+        }
+
+        // Populate vehicle details
+        if (booking.getVehicle() != null) {
+            builder.vehicleMake(booking.getVehicle().getMake())
+                    .vehicleModel(booking.getVehicle().getModel());
+        }
+
+        return builder.build();
     }
 
     public static Booking toEntity(BookingDto dto) {

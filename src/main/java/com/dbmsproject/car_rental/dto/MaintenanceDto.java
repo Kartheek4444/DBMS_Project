@@ -40,4 +40,8 @@ public class MaintenanceDto {
 
     @Positive(message = "Next service mileage must be positive")
     private Integer nextServiceMileage;
+
+    // Add these fields
+    private String vehicleName;
+    private String staffName;
 }
