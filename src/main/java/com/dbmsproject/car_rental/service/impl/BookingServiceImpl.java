@@ -31,10 +31,21 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDto createBooking(BookingDto bookingDto) {
+        if (bookingDto.getPickupDate() == null || bookingDto.getReturnDate() == null) {
+            throw new IllegalArgumentException("Pickup date and return date are required.");
+        }
+        if (!bookingDto.getReturnDate().isAfter(bookingDto.getPickupDate())) {
+            throw new IllegalArgumentException("Return date must be after pickup date.");
+        }
+
         Customer customer = customerRepository.findById(bookingDto.getCustomerId())
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
         Vehicle vehicle = vehicleRepository.findById(bookingDto.getVehicleId())
                 .orElseThrow(() -> new ResourceNotFoundException("Vehicle not found"));
+
+        if (bookingRepository.existsOverlappingBooking(vehicle.getVehicleId(), bookingDto.getPickupDate(), bookingDto.getReturnDate(), null)) {
+            throw new IllegalArgumentException("Vehicle is already booked for the selected dates.");
+        }
 
         Booking booking = Booking.builder()
                 .customer(customer)
@@ -62,10 +73,23 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
 
-        booking.setPickupDate(bookingDto.getPickupDate());
-        booking.setReturnDate(bookingDto.getReturnDate());
-        booking.setDepositAmount(bookingDto.getDepositAmount());
-        booking.setStatus(bookingDto.getStatus());
+        if (bookingDto.getPickupDate() != null && bookingDto.getReturnDate() != null) {
+            if (!bookingDto.getReturnDate().isAfter(bookingDto.getPickupDate())) {
+                throw new IllegalArgumentException("Return date must be after pickup date.");
+            }
+            if (bookingRepository.existsOverlappingBooking(booking.getVehicle().getVehicleId(), bookingDto.getPickupDate(), bookingDto.getReturnDate(), bookingId)) {
+                throw new IllegalArgumentException("Vehicle is already booked for the selected dates.");
+            }
+            booking.setPickupDate(bookingDto.getPickupDate());
+            booking.setReturnDate(bookingDto.getReturnDate());
+        }
+
+        if (bookingDto.getDepositAmount() != null) {
+            booking.setDepositAmount(bookingDto.getDepositAmount());
+        }
+        if (bookingDto.getStatus() != null) {
+            booking.setStatus(bookingDto.getStatus());
+        }
 
         Booking updatedBooking = bookingRepository.save(booking);
         return BookingMapper.toDto(updatedBooking);

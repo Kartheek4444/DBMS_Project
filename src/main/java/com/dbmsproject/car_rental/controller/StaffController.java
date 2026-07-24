@@ -69,7 +69,7 @@ public class StaffController {
         }
     }
 
-    @PostMapping
+    @PostMapping("/api/staff")
     public ResponseEntity<StaffDto> createStaff(@RequestBody StaffDto staffDto) {
         StaffDto savedStaff = staffService.createStaff(staffDto);
         return new ResponseEntity<>(savedStaff, HttpStatus.CREATED);

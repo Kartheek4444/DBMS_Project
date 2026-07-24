@@ -118,8 +118,13 @@ public class PageController {
     public String customerProfile(Model model, Authentication authentication) {
         if (authentication != null && authentication.isAuthenticated()) {
             String email = authentication.getName();
-            CustomerDto customer = customerService.getCustomerByEmail(email);
-            model.addAttribute("customer", customer);
+            try {
+                CustomerDto customer = customerService.getCustomerByEmail(email);
+                model.addAttribute("customer", customer);
+            } catch (Exception e) {
+                // If logged in as staff/admin instead of customer, redirect to staff profile
+                return "redirect:/staff/profile";
+            }
         }
         return "customer_profile";
     }
@@ -128,8 +133,12 @@ public class PageController {
     public String editProfile(Model model, Authentication authentication) {
         if (authentication != null && authentication.isAuthenticated()) {
             String email = authentication.getName();
-            CustomerDto customer = customerService.getCustomerByEmail(email);
-            model.addAttribute("customer", customer);
+            try {
+                CustomerDto customer = customerService.getCustomerByEmail(email);
+                model.addAttribute("customer", customer);
+            } catch (Exception e) {
+                return "redirect:/staff/profile/edit";
+            }
         }
         return "customer_profile_edit";
     }
@@ -164,12 +173,16 @@ public class PageController {
     public String bookingsPage(Model model, Authentication authentication) {
         if (authentication != null && authentication.isAuthenticated()) {
             String email = authentication.getName();
-            CustomerDto customer = customerService.getCustomerByEmail(email);
-
-            if (customer != null) {
-                List<BookingDto> bookings = bookingService.getBookingsByCustomerId(customer.getCustomerId());
-                model.addAttribute("bookings", bookings);
-            } else {
+            try {
+                CustomerDto customer = customerService.getCustomerByEmail(email);
+                if (customer != null) {
+                    List<BookingDto> bookings = bookingService.getBookingsByCustomerId(customer.getCustomerId());
+                    model.addAttribute("bookings", bookings);
+                } else {
+                    model.addAttribute("bookings", new ArrayList<>());
+                }
+            } catch (Exception e) {
+                // Staff or admin viewing bookings page redirect or empty list
                 model.addAttribute("bookings", new ArrayList<>());
             }
         } else {

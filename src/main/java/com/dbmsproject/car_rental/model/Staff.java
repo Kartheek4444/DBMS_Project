@@ -27,6 +27,7 @@ public class Staff {
     private String firstName;
     private String lastName;
 
+    @Builder.Default
     private Boolean isActive = true;
     private String email;
     private String phone;
@@ -38,6 +39,7 @@ public class Staff {
 
     private LocalDate hireDate;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Roles role = Roles.STAFF;
@@ -52,12 +54,15 @@ public class Staff {
     )
     private Staff manager;
 
+    @Builder.Default
     @OneToMany(mappedBy = "handledBy")
     private List<Maintenance> maintenances = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "handledBy")
     private List<RentalAgreement> rentalAgreements = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StaffMiddleName> middleNames = new ArrayList<>();
 

@@ -55,9 +55,11 @@ public class Customer {
     @Column(name = "registration_date")
     private LocalDate registrationDate;
 
+    @Builder.Default
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Booking> bookings = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CustomerMiddleName> middleNames = new ArrayList<>();
 

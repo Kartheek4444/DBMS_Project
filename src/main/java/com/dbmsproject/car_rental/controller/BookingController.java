@@ -45,12 +45,12 @@ public class BookingController {
 
 
     @GetMapping("/bookings/vehicle/{vehicleId}")
-    public ResponseEntity<List<BookingDto>> getBookingsByVehicle(@RequestParam Long vehicleId) {
+    public ResponseEntity<List<BookingDto>> getBookingsByVehicle(@PathVariable Long vehicleId) {
         return ResponseEntity.ok(bookingService.getBookingsByVehicleId(vehicleId));
     }
 
     @PostMapping("/bookings/{id}/confirm")
-    public ResponseEntity<BookingDto> confirmBooking(@RequestParam Long bookingId) {
+    public ResponseEntity<BookingDto> confirmBooking(@PathVariable("id") Long bookingId) {
         return ResponseEntity.ok(bookingService.confirmBooking(bookingId));
     }
 

@@ -35,11 +35,13 @@ public class Booking {
 
     private LocalDateTime bookingDate;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     private BookingStatus status = BookingStatus.PENDING;
 
     private BigDecimal depositAmount;
 
+    @Builder.Default
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Payment> payments = new ArrayList<>();
 

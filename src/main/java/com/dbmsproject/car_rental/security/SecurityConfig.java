@@ -37,7 +37,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/index","/vehicles","/vehicles/{id}", "/login", "/signup", "/staff_login","/admin/dashboard", "/css/**", "/js/**", "/images/**", "/uploads/**").permitAll()
+                        .requestMatchers("/", "/index", "/vehicles", "/vehicles/{id}", "/login", "/signup", "/staff_login", "/css/**", "/js/**", "/images/**", "/uploads/**").permitAll()
                         .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
                         .requestMatchers("/staff/**", "/vehicles/register", "/vehicles/{id}/edit", "/bookings/{id}/edit", "/bookings/{id}/update", "/rental-agreements/**", "/maintenance/**").hasAnyAuthority("STAFF", "ADMIN")
                         .requestMatchers("/bookings", "/bookings/new", "/bookings/create").hasAnyAuthority("USER", "STAFF", "ADMIN")
@@ -55,7 +55,7 @@ public class SecurityConfig {
                         .logoutSuccessUrl("/")
                         .permitAll()
                 )
-                .csrf(csrf -> csrf.disable());
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"));
 
         return http.build();
     }
