@@ -42,6 +42,11 @@ public class CustomerServiceImpl implements CustomerService {
             throw new IllegalArgumentException("This email is already registered. Please use a different email or login.");
         }
 
+        // Check if phone number already exists in customer table
+        if (customerSignupDto.getPhoneNumber() != null && customerRepository.findByPhoneNumber(customerSignupDto.getPhoneNumber()).isPresent()) {
+            throw new IllegalArgumentException("This phone number is already registered. Please use a different phone number.");
+        }
+
         Customer customer = Customer.builder()
                 .firstName(customerSignupDto.getFirstName())
                 .lastName(customerSignupDto.getLastName())

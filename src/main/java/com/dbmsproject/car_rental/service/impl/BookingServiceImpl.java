@@ -73,15 +73,18 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
 
-        if (bookingDto.getPickupDate() != null && bookingDto.getReturnDate() != null) {
-            if (!bookingDto.getReturnDate().isAfter(bookingDto.getPickupDate())) {
+        if (bookingDto.getPickupDate() != null || bookingDto.getReturnDate() != null) {
+            LocalDateTime effectivePickup = bookingDto.getPickupDate() != null ? bookingDto.getPickupDate() : booking.getPickupDate();
+            LocalDateTime effectiveReturn = bookingDto.getReturnDate() != null ? bookingDto.getReturnDate() : booking.getReturnDate();
+
+            if (!effectiveReturn.isAfter(effectivePickup)) {
                 throw new IllegalArgumentException("Return date must be after pickup date.");
             }
-            if (bookingRepository.existsOverlappingBooking(booking.getVehicle().getVehicleId(), bookingDto.getPickupDate(), bookingDto.getReturnDate(), bookingId)) {
+            if (bookingRepository.existsOverlappingBooking(booking.getVehicle().getVehicleId(), effectivePickup, effectiveReturn, bookingId)) {
                 throw new IllegalArgumentException("Vehicle is already booked for the selected dates.");
             }
-            booking.setPickupDate(bookingDto.getPickupDate());
-            booking.setReturnDate(bookingDto.getReturnDate());
+            booking.setPickupDate(effectivePickup);
+            booking.setReturnDate(effectiveReturn);
         }
 
         if (bookingDto.getDepositAmount() != null) {

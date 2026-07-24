@@ -60,11 +60,13 @@ public class PageController {
             @Valid @ModelAttribute("customerSignupDto") CustomerSignupDto dto,
             BindingResult br,
             Model model) {
-        if (br.hasErrors()) return "signup";
+        if (br.hasErrors()) {
+            model.addAttribute("signupError", "Please correct the highlighted errors below.");
+            return "signup";
+        }
 
         try {
             customerService.createCustomer(dto);
-            model.addAttribute("successMessage", "Account created successfully! Please login.");
             return "redirect:/login?registered=true";
         } catch (IllegalArgumentException e) {
             model.addAttribute("signupError", e.getMessage());

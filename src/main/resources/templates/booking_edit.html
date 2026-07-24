@@ -32,6 +32,8 @@
         </h1>
 
         <form th:action="@{/bookings/{id}/update(id=${booking.bookingId})}" method="post" th:object="${booking}">
+            <!-- CSRF Token -->
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
             <!-- Vehicle Selection -->
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700 mb-2">
